@@ -92,6 +92,7 @@ public class EmpleadoRest {
 		return ResponseEntity.of(empleado);
 	}
 	@GetMapping
+	@ApiOperation(value= "Obtener empleado dada su nombre de usuario")
 	public ResponseEntity<Empleado> getPorNombre(@RequestParam(required= false) String nombre){
 		Optional<Empleado> empleado = listaEmpleado.stream()
 				.filter(unEmpleado -> unEmpleado.getUser().getUser().equals(nombre))
