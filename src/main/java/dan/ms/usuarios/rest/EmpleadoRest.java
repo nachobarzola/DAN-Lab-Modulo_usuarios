@@ -6,6 +6,8 @@ import java.util.OptionalInt;
 import java.util.stream.IntStream;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -30,6 +32,7 @@ public class EmpleadoRest {
 	
 	
 	@PostMapping
+	@ApiOperation(value = "Crear un empleado")
 	public ResponseEntity<Empleado> crear(@RequestBody Empleado nuevoEmp){
 		System.out.print("Se creo un nuevo empleado con:"+nuevoEmp.toString()+"\n");
 		nuevoEmp.setId(ID_GEN++);
@@ -38,7 +41,7 @@ public class EmpleadoRest {
 	}
 	
 	@PutMapping(path = "/{id}")
-	 @ApiOperation(value = "Actualiza un empleado")
+	@ApiOperation(value = "Actualizar empleado")
 	@ApiResponses(value = {
     @ApiResponse(code = 200, message = "Actualizado correctamente"),
     @ApiResponse(code = 401, message = "No autorizado"),
@@ -57,6 +60,43 @@ public class EmpleadoRest {
 			return ResponseEntity.notFound().build();
 		}
 	}
+	
+	@DeleteMapping(path= "/{id}")
+	@ApiOperation(value= "Eliminar empleado")
+	public ResponseEntity<Empleado> borrar(@PathVariable Integer id){
+		OptionalInt index = IntStream.range(0, listaEmpleado.size())
+				.filter(i -> listaEmpleado.get(i).getId().equals(id))
+				.findFirst();
+		if(index.isPresent()){
+			listaEmpleado.remove(index.getAsInt());
+			return ResponseEntity.ok().build();
+		}
+		else {
+			return ResponseEntity.notFound().build();
+		}
+		
+	}
+	@GetMapping("/{id}")
+	@ApiOperation(value= "Obtener empleado dada una id")
+	@ApiResponses(value= {
+			@ApiResponse(code= 200, message= "Obtuvo correctamente"),
+			@ApiResponse(code= 404, message= "El ID no existe")
+	})
+	public ResponseEntity<Empleado> getPorId(@PathVariable Integer id){
+		OptionalInt index = IntStream.range(0, listaEmpleado.size())
+				.filter(i -> listaEmpleado.get(i).getId().equals(id))
+				.findFirst();
+		if(index.isPresent()) {
+			return ResponseEntity.ok(listaEmpleado.get(index.getAsInt()));
+		}
+		else {
+			return ResponseEntity.notFound().build();
+		}
+	}
+	
+	
+	
+	
 	
 	
 
