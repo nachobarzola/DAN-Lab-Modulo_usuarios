@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -44,7 +45,28 @@ public class ClienteRest {
                 .findFirst();
         return ResponseEntity.of(c);
     }
-
+    
+    @GetMapping(path = "/obtenerCliente/{cuit}")
+    @ApiOperation(value = "Busca un cliente por el cuit")
+    public ResponseEntity<Cliente> clientePorCuit(@PathVariable String cuit){
+    	Optional<Cliente> c = listaClientes
+    			.stream()
+    			.filter(unCli -> unCli.getCuit().equals(cuit))
+    			.findFirst();
+    	return ResponseEntity.of(c);
+    	
+    	
+    }
+    @GetMapping(path= "/obtenerCliente")
+    @ApiOperation(value = "Busca un cliente por la razon social")
+    public ResponseEntity<Cliente> clientePorRazonSocial(@RequestParam(required = false) String razonSocial){
+    	Optional<Cliente> c = listaClientes
+    			.stream()
+    			.filter(unCli -> unCli.getRazonSocial().equals(razonSocial))
+    			.findFirst();
+    	return ResponseEntity.of(c);
+    }
+    
     @GetMapping
     public ResponseEntity<List<Cliente>> todos(){
         return ResponseEntity.ok(listaClientes);
@@ -52,7 +74,7 @@ public class ClienteRest {
 
     @PostMapping
     public ResponseEntity<Cliente> crear(@RequestBody Cliente nuevo){
-    	System.out.println(" crear cliente "+nuevo);
+    	System.out.println("Se creo un nuevo cliente con:"+nuevo.toString()+"\n");
         nuevo.setId(ID_GEN++);
         listaClientes.add(nuevo);
         return ResponseEntity.ok(nuevo);
@@ -92,6 +114,10 @@ public class ClienteRest {
             return ResponseEntity.notFound().build();
         }
     }
+    
+    
+    
+    
 
 
 }

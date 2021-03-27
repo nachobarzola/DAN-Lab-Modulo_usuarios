@@ -24,7 +24,9 @@ public class Cliente {
 		this.obras = obras;
 		this.user = user;
 	}
-	public Cliente() {}
+	public Cliente() {
+		super();
+	}
 	public Integer getId() {
 		return id;
 	}
@@ -73,6 +75,13 @@ public class Cliente {
 	public void setUser(Usuario user) {
 		this.user = user;
 	}
+	@Override
+	public String toString() {
+		return "Cliente [id=" + id + ", razonSocial=" + razonSocial + ", cuit=" + cuit + ", mail=" + mail
+				+ ", maxCuentaCorriente=" + maxCuentaCorriente + ", habilitadoOnline=" + habilitadoOnline + ", obras="
+				+ obras + ", user=" + user + "]";
+	}
+	
 	
 	
 	
