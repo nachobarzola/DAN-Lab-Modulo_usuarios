@@ -2,6 +2,7 @@ package dan.ms.usuarios.rest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.stream.IntStream;
 
@@ -13,10 +14,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
 import dan.ms.usuarios.domain.Empleado;
+import dan.ms.usuarios.domain.Obra;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -83,17 +86,18 @@ public class EmpleadoRest {
 			@ApiResponse(code= 404, message= "El ID no existe")
 	})
 	public ResponseEntity<Empleado> getPorId(@PathVariable Integer id){
-		OptionalInt index = IntStream.range(0, listaEmpleado.size())
-				.filter(i -> listaEmpleado.get(i).getId().equals(id))
+		Optional<Empleado> empleado = listaEmpleado.stream()
+				.filter(unEmpleado -> unEmpleado.getId().equals(id))
 				.findFirst();
-		if(index.isPresent()) {
-			return ResponseEntity.ok(listaEmpleado.get(index.getAsInt()));
-		}
-		else {
-			return ResponseEntity.notFound().build();
-		}
+		return ResponseEntity.of(empleado);
 	}
-	
+	@GetMapping
+	public ResponseEntity<Empleado> getPorNombre(@RequestParam(required= false) String nombre){
+		Optional<Empleado> empleado = listaEmpleado.stream()
+				.filter(unEmpleado -> unEmpleado.getUser().getUser().equals(nombre))
+				.findFirst();
+		return ResponseEntity.of(empleado);
+	}
 	
 	
 	
