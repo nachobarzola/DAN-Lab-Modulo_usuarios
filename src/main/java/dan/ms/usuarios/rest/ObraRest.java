@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiResponses;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.stream.IntStream;
 
@@ -70,6 +71,14 @@ public class ObraRest {
 		}
 	}
 
+	@GetMapping(path= "/{id}")
+	@ApiOperation(value="Obtener obra por Id")
+	public ResponseEntity<Obra> getPorId(@PathVariable Integer id){
+		Optional<Obra> obra = listaObra.stream()
+				.filter(unaObra -> unaObra.getId().equals(id))
+				.findFirst();
+		return ResponseEntity.of(obra);
+	}
 	
 	
 	
