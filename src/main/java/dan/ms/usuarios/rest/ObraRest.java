@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -80,7 +83,48 @@ public class ObraRest {
 		return ResponseEntity.of(obra);
 	}
 	
+	//ResponseEntity<List<Obra>>
+	@GetMapping
+	@ApiOperation(value="Obtener obra por cliente y/o tipo de obra. Usando parametros opcionales")
+	public ResponseEntity<List<Obra>> getObraPorClienteOTipo(@RequestParam(required=false) Integer id_cliente, @RequestParam(required=false) Integer tipoObra){
+		
+		//Si se ingresa el parametro id_cliente pero no el tipoObra
+		if(id_cliente != null && tipoObra == null) {
+			return ResponseEntity.ok(filtrarListaPorIdCliente(id_cliente));
+		}
+		//Si no se ingresa el parametro id_cliente pero si el tipoObra
+		else if(id_cliente == null && tipoObra != null) {
+			return ResponseEntity.ok(filtrarListaPorTipoObra(tipoObra));
+		}
+		//Si ingresan ambos parametros
+		else if(id_cliente != null && tipoObra != null){
+			List<Obra> listAux;
+			listAux = filtrarListaPorIdCliente(id_cliente);
+			listAux.addAll(filtrarListaPorTipoObra(tipoObra));
+			return ResponseEntity.ok(listAux);
+		}
+		//No se ingresa ningun parametro
+		else {
+			return ResponseEntity.ok().build();
+		}
+	}
 	
+	
+	
+	//METODOS AUXILIARES 
+	//no pertenecen a la API REST
+	private List<Obra> filtrarListaPorIdCliente(Integer id_cliente){
+		List<Obra> listaFiltrada= new ArrayList<>();
+		listaFiltrada = listaObra.stream()
+				.filter(unaObra -> unaObra.getCliente().getId().equals(id_cliente)).collect(Collectors.toList());
+		return listaFiltrada;
+	}
+	private List<Obra> filtrarListaPorTipoObra(Integer tipoObra){
+		List<Obra> listaFiltrada= new ArrayList<>();
+		listaFiltrada = listaObra.stream()
+				.filter(unaObra -> unaObra.getTipo().getId().equals(tipoObra)).collect(Collectors.toList());
+		return listaFiltrada;
+	}
 	
 	
 }
