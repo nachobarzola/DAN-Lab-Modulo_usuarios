@@ -87,26 +87,23 @@ public class ObraRest {
 	@GetMapping
 	@ApiOperation(value="Obtener obra por id del cliente y/o tipo de obra. Usando parametros opcionales")
 	public ResponseEntity<List<Obra>> getObraPorClienteOTipo(@RequestParam(required=false) Integer id_cliente, @RequestParam(required=false) Integer tipoObra){
-		
-		//Si se ingresa el parametro id_cliente pero no el tipoObra
-		if(id_cliente != null && tipoObra == null) {
-			return ResponseEntity.ok(filtrarListaPorIdCliente(id_cliente));
-		}
-		//Si no se ingresa el parametro id_cliente pero si el tipoObra
-		else if(id_cliente == null && tipoObra != null) {
-			return ResponseEntity.ok(filtrarListaPorTipoObra(tipoObra));
-		}
-		//Si ingresan ambos parametros
-		else if(id_cliente != null && tipoObra != null){
-			List<Obra> listAux;
-			listAux = filtrarListaPorIdCliente(id_cliente);
-			listAux.addAll(filtrarListaPorTipoObra(tipoObra));
-			return ResponseEntity.ok(listAux);
-		}
+		List<Obra> respuesta1 = new ArrayList<>();
+		List<Obra> respuesta2 = new ArrayList<>();
 		//No se ingresa ningun parametro
-		else {
-			return ResponseEntity.ok().build();
+		if(id_cliente == null && tipoObra == null) {
+			return ResponseEntity.badRequest().build();
 		}
+		//Si se ingresa el parametro id_cliente
+		if(id_cliente != null) {
+			respuesta1 = filtrarListaPorIdCliente(id_cliente);
+		}
+		//Si se ingresa el parametro tipoObra
+		if(tipoObra != null) {
+			respuesta2 = filtrarListaPorTipoObra(tipoObra);
+		}
+		respuesta1.addAll(respuesta2);
+		return ResponseEntity.ok(respuesta1);
+		
 	}
 	
 	
