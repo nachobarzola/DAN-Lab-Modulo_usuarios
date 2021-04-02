@@ -99,19 +99,26 @@ public class ObraRest {
 		//Si se ingresa el parametro id_cliente
 		if(id_cliente != null) {
 			respuesta1 = filtrarListaPorIdCliente(id_cliente);
+			//System.out.print("Respuesta1:"+respuesta1.size()+"\n");
 		}
 		//Si se ingresa el parametro tipoObra
 		if(tipoObra != null) {
 			respuesta2 = filtrarListaPorTipoObra(tipoObra);
+			//System.out.print("Respuesta2:"+respuesta2.size()+"\n");
 		}
 		if(cuitCliente != null) {
 			respuesta3 = filtrarListaPorCuitCliente(cuitCliente);
+			//System.out.print("Respuesta3:"+respuesta3.size()+"\n");
 		}
 		respuesta2.addAll(respuesta3);
 		respuesta1.addAll(respuesta2);
-		return ResponseEntity.ok(respuesta1);
+		//Verificamos si hay elementos duplicados y los eliminamos.
+		//Este caso se puede dar si se usan mutiples parametros y comparten los mismo valores
+		List<Obra> respuestaFinal= respuesta1.stream()
+				.distinct().collect(Collectors.toList());
+		//System.out.print("RespuestaFinal:"+respuestaFinal.size()+"\n");
+		return ResponseEntity.ok(respuestaFinal);
 	}
-	
 	
 	
 	//METODOS AUXILIARES 
