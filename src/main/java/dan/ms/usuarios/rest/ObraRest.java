@@ -86,19 +86,19 @@ public class ObraRest {
 	//ResponseEntity<List<Obra>>
 	@GetMapping
 	@ApiOperation(value="Obtener obra por id del cliente y/o tipo de obra y/o cuit del cliente. Usando parametros opcionales")
-	public ResponseEntity<List<Obra>> getObraPorClienteOTipo(@RequestParam(required=false) Integer id_cliente, @RequestParam(required=false) Integer tipoObra,
+	public ResponseEntity<List<Obra>> getObraPorClienteOTipo(@RequestParam(required=false) Integer idCliente, @RequestParam(required=false) Integer tipoObra,
 			@RequestParam(required=false) String cuitCliente){
 		
 		List<Obra> respuesta1 = new ArrayList<>();
 		List<Obra> respuesta2 = new ArrayList<>();
 		List<Obra> respuesta3 = new ArrayList<>();
 		//No se ingresa ningun parametro
-		if(id_cliente == null && tipoObra == null && cuitCliente == null) {
+		if(idCliente == null && tipoObra == null && cuitCliente == null) {
 			return ResponseEntity.badRequest().build();
 		}
 		//Si se ingresa el parametro id_cliente
-		if(id_cliente != null) {
-			respuesta1 = filtrarListaPorIdCliente(id_cliente);
+		if(idCliente != null) {
+			respuesta1 = filtrarListaPorIdCliente(idCliente);
 			//System.out.print("Respuesta1:"+respuesta1.size()+"\n");
 		}
 		//Si se ingresa el parametro tipoObra
