@@ -85,12 +85,15 @@ public class ObraRest {
 	
 	//ResponseEntity<List<Obra>>
 	@GetMapping
-	@ApiOperation(value="Obtener obra por id del cliente y/o tipo de obra. Usando parametros opcionales")
-	public ResponseEntity<List<Obra>> getObraPorClienteOTipo(@RequestParam(required=false) Integer id_cliente, @RequestParam(required=false) Integer tipoObra){
+	@ApiOperation(value="Obtener obra por id del cliente y/o tipo de obra y/o cuit del cliente. Usando parametros opcionales")
+	public ResponseEntity<List<Obra>> getObraPorClienteOTipo(@RequestParam(required=false) Integer id_cliente, @RequestParam(required=false) Integer tipoObra,
+			@RequestParam(required=false) String cuitCliente){
+		
 		List<Obra> respuesta1 = new ArrayList<>();
 		List<Obra> respuesta2 = new ArrayList<>();
+		List<Obra> respuesta3 = new ArrayList<>();
 		//No se ingresa ningun parametro
-		if(id_cliente == null && tipoObra == null) {
+		if(id_cliente == null && tipoObra == null && cuitCliente == null) {
 			return ResponseEntity.badRequest().build();
 		}
 		//Si se ingresa el parametro id_cliente
@@ -101,9 +104,12 @@ public class ObraRest {
 		if(tipoObra != null) {
 			respuesta2 = filtrarListaPorTipoObra(tipoObra);
 		}
+		if(cuitCliente != null) {
+			respuesta3 = filtrarListaPorCuitCliente(cuitCliente);
+		}
+		respuesta2.addAll(respuesta3);
 		respuesta1.addAll(respuesta2);
 		return ResponseEntity.ok(respuesta1);
-		
 	}
 	
 	
@@ -120,6 +126,12 @@ public class ObraRest {
 		List<Obra> listaFiltrada= new ArrayList<>();
 		listaFiltrada = listaObra.stream()
 				.filter(unaObra -> unaObra.getTipo().getId().equals(tipoObra)).collect(Collectors.toList());
+		return listaFiltrada;
+	}
+	private List<Obra> filtrarListaPorCuitCliente(String cuitCliente){
+		List<Obra> listaFiltrada= new ArrayList<>();
+		listaFiltrada = listaObra.stream()
+				.filter(unaObra -> unaObra.getCliente().getCuit().equals(cuitCliente)).collect(Collectors.toList());
 		return listaFiltrada;
 	}
 	
