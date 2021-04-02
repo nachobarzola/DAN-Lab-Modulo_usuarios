@@ -85,7 +85,7 @@ public class ObraRest {
 	
 	//ResponseEntity<List<Obra>>
 	@GetMapping
-	@ApiOperation(value="Obtener obra por cliente y/o tipo de obra. Usando parametros opcionales")
+	@ApiOperation(value="Obtener obra por id del cliente y/o tipo de obra. Usando parametros opcionales")
 	public ResponseEntity<List<Obra>> getObraPorClienteOTipo(@RequestParam(required=false) Integer id_cliente, @RequestParam(required=false) Integer tipoObra){
 		
 		//Si se ingresa el parametro id_cliente pero no el tipoObra
