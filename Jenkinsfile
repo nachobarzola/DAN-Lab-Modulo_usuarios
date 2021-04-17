@@ -5,7 +5,7 @@ pipeline {
     stages {
         stage('clean') {
             when {
-                branch 'master'
+                branch 'main'
             }
             steps {
                 bat "java -version"
@@ -14,12 +14,12 @@ pipeline {
         }
         stage('clean-develop') {
             when {
-                branch 'develop'
+                branch 'Desarrollo'
             }
             steps {
                 bat "java -version"
                 bat "./mvnw clean"
-                bat "echo buildeando develop"
+                bat "echo buildeando desarrollo"
             }
         }
         stage('backend tests') {
