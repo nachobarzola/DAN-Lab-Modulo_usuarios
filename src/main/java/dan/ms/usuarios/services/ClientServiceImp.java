@@ -1,0 +1,92 @@
+package dan.ms.usuarios.services;
+
+
+import java.util.Date;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import dan.ms.persistence.repositories.ClienteRepository;
+import dan.ms.usuarios.domain.Cliente;
+import dan.ms.usuarios.services.interfaces.ClientService;
+import dan.ms.usuarios.services.interfaces.RiesgoBCRAService;
+
+@Service
+public class ClientServiceImp implements ClientService {
+
+	private static String API_REST_PEDIDO = "http://localhost:8080/api";
+	private static String ENDPOINT_PEDIDO = "/pedido";
+
+	@Autowired
+	ClienteRepository clienteRepo;
+
+	@Autowired
+	RiesgoBCRAService riesgoBcra;
+
+	@Override
+	public Cliente guardarCliente(Cliente clienteNuevo) {
+
+		if (tieneRiesgoCrediticio(clienteNuevo)) {
+			return null;
+		}
+		return this.clienteRepo.save(clienteNuevo);
+	}
+
+	@Override
+	public Optional<Cliente> buscarPorId(Integer id) {
+		return this.clienteRepo.findById(id);
+	}
+
+	private Boolean tieneRiesgoCrediticio(Cliente cli) {
+
+		if (riesgoBcra.estadoCrediticio(cli) != (1 | 2)) {
+			return false;
+		}
+
+		return true;
+
+	}
+
+	/*
+	 * Para dar de baja un cliente, no se puede eliminar si ya ha realizado algun
+	 * pedido, por lo que en ese caso, debe agregar un atributo, "fechaBaja" y
+	 * asignarle una fecha. Todos los clientes activos son aquellos que no tienen
+	 * fechaBaja (o es null).
+	 * 
+	 */
+	@Override
+	public void borrarCliente(Cliente cli) {
+
+		RestTemplate restUsuario = new RestTemplate();
+		String uri = API_REST_PEDIDO + ENDPOINT_PEDIDO;
+
+		uri = uri + "?idCliente=" + cli.getId();
+
+		ResponseEntity<Object[]> respuesta = restUsuario.exchange(uri, HttpMethod.GET, null, Object[].class);
+		Object[] pedidosRespuesta = respuesta.getBody();
+
+		Boolean tienePedidos = (pedidosRespuesta.length > 0);
+
+		if (tienePedidos) {
+			Date date = new Date(System.currentTimeMillis());
+			cli.setFechaBaja(date);
+			actualizarCliente(cli);
+
+		} else {
+			this.clienteRepo.delete(cli);
+
+		}
+
+	}
+
+	@Override
+	public Cliente actualizarCliente(Cliente cli) {
+		// TODO Falta implementar actualizar cliente
+		return null;
+	}
+
+}

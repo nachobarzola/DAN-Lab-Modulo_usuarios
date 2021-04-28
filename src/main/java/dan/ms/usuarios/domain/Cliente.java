@@ -1,5 +1,6 @@
 package dan.ms.usuarios.domain;
 
+import java.util.Date;
 import java.util.List;
 
 public class Cliente {
@@ -11,9 +12,10 @@ public class Cliente {
 	private Boolean habilitadoOnline;
 	private List<Obra> obras;
 	private Usuario user;
+	private Date fechaBaja;
 	
 	public Cliente(Integer id, String razonSocial, String cuit, String mail, Integer maxCuentaCorriente,
-			Boolean habilitadoOnline, List<Obra> obras, Usuario user) {
+			Boolean habilitadoOnline, List<Obra> obras, Usuario user,Date fechaBaja) {
 		super();
 		this.id = id;
 		this.razonSocial = razonSocial;
@@ -23,6 +25,7 @@ public class Cliente {
 		this.habilitadoOnline = habilitadoOnline;
 		this.obras = obras;
 		this.user = user;
+		this.fechaBaja = fechaBaja;
 	}
 	public Cliente() {
 		super();
@@ -80,6 +83,12 @@ public class Cliente {
 		return "Cliente [id=" + id + ", razonSocial=" + razonSocial + ", cuit=" + cuit + ", mail=" + mail
 				+ ", maxCuentaCorriente=" + maxCuentaCorriente + ", habilitadoOnline=" + habilitadoOnline + ", obras="
 				+ obras + ", user=" + user + "]";
+	}
+	public Date getFechaBaja() {
+		return fechaBaja;
+	}
+	public void setFechaBaja(Date fechaBaja) {
+		this.fechaBaja = fechaBaja;
 	}
 	
 	
