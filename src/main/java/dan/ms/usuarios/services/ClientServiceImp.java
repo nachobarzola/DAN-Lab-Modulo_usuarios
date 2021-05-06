@@ -1,6 +1,5 @@
 package dan.ms.usuarios.services;
 
-
 import java.util.Date;
 import java.util.Optional;
 
@@ -38,7 +37,16 @@ public class ClientServiceImp implements ClientService {
 
 	@Override
 	public Optional<Cliente> buscarPorId(Integer id) {
-		return this.clienteRepo.findById(id);
+
+		Optional<Cliente> optcl = this.clienteRepo.findById(id);
+
+		if (optcl.isPresent()) {
+			if (!dadoDeBaja(optcl.get())) {
+				return optcl;
+			}
+		}
+		return null;
+
 	}
 
 	private Boolean tieneRiesgoCrediticio(Cliente cli) {
@@ -87,6 +95,11 @@ public class ClientServiceImp implements ClientService {
 	public Cliente actualizarCliente(Cliente cli) {
 		// TODO Falta implementar actualizar cliente
 		return null;
+	}
+
+	private Boolean dadoDeBaja(Cliente cli) {
+
+		return cli.getFechaBaja() != null;
 	}
 
 }

@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import dan.ms.usuarios.domain.Cliente;
 import dan.ms.usuarios.domain.Obra;
 import dan.ms.usuarios.domain.Usuario;
-import dan.ms.usuarios.services.ClientServiceImp;
 import dan.ms.usuarios.services.interfaces.ClientService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -52,7 +51,8 @@ public class ClienteRest {
 	@GetMapping(path = "/obtenerCliente/{cuit}")
 	@ApiOperation(value = "Busca un cliente por el cuit")
 	public ResponseEntity<Cliente> clientePorCuit(@PathVariable String cuit) {
-		Optional<Cliente> c = listaClientesAntigua.stream().filter(unCli -> unCli.getCuit().equals(cuit)).findFirst();
+		Optional<Cliente> c = listaClientesAntigua.stream().filter(unCli -> (unCli.getCuit().equals(cuit)))
+				.findFirst();
 		return ResponseEntity.of(c);
 
 	}
