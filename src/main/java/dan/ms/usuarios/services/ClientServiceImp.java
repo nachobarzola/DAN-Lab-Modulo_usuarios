@@ -49,6 +49,31 @@ public class ClientServiceImp implements ClientService {
 
 	}
 
+	@Override
+	public Optional<Cliente> buscarPorCuit(String cuit) {
+		Optional<Cliente> optCliente = this.clienteRepo.findByCuit(cuit);
+
+		if (optCliente.isPresent()) {
+			if (!dadoDeBaja(optCliente.get())) {
+				return optCliente;
+			}
+		}
+		//TODO: retornar un opcional en todos
+		return Optional.empty();
+	}
+
+	@Override
+	public Optional<Cliente> buscarPorRazonSocial(String razonSocial) {
+		Optional<Cliente> optCliente = this.clienteRepo.findByRazonSocial(razonSocial);
+
+		if (optCliente.isPresent()) {
+			if (!dadoDeBaja(optCliente.get())) {
+				return optCliente;
+			}
+		}
+		//TODO: retornar un opcional en todos
+		return Optional.empty();
+	}
 	private Boolean tieneRiesgoCrediticio(Cliente cli) {
 
 		if (riesgoBcra.estadoCrediticio(cli) != (1 | 2)) {
@@ -101,5 +126,6 @@ public class ClientServiceImp implements ClientService {
 
 		return cli.getFechaBaja() != null;
 	}
+
 
 }

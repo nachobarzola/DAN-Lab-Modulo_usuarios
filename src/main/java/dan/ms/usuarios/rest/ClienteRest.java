@@ -51,18 +51,22 @@ public class ClienteRest {
 	@GetMapping(path = "/obtenerCliente/{cuit}")
 	@ApiOperation(value = "Busca un cliente por el cuit")
 	public ResponseEntity<Cliente> clientePorCuit(@PathVariable String cuit) {
-		Optional<Cliente> c = listaClientesAntigua.stream().filter(unCli -> (unCli.getCuit().equals(cuit)))
+		/*Optional<Cliente> c = listaClientesAntigua.stream().filter(unCli -> (unCli.getCuit().equals(cuit)))
 				.findFirst();
-		return ResponseEntity.of(c);
+		return ResponseEntity.of(c);*/
+		
+		return ResponseEntity.of(clientService.buscarPorCuit(cuit));
 
 	}
 
 	@GetMapping(path = "/obtenerCliente")
 	@ApiOperation(value = "Busca un cliente por la razon social")
 	public ResponseEntity<Cliente> clientePorRazonSocial(@RequestParam(required = false) String razonSocial) {
-		Optional<Cliente> c = listaClientesAntigua.stream().filter(unCli -> unCli.getRazonSocial().equals(razonSocial))
+		/*Optional<Cliente> c = listaClientesAntigua.stream().filter(unCli -> unCli.getRazonSocial().equals(razonSocial))
 				.findFirst();
-		return ResponseEntity.of(c);
+		return ResponseEntity.of(c);*/
+		return ResponseEntity.of(clientService.buscarPorRazonSocial(razonSocial));
+		
 	}
 
 	@GetMapping

@@ -11,6 +11,10 @@ public interface ClientService {
 
 	public Optional<Cliente> buscarPorId(Integer id);
 	
+	public Optional<Cliente> buscarPorCuit(String cuit);
+	
+	public Optional<Cliente> buscarPorRazonSocial(String razonSocial);
+	
 	public void borrarCliente(Cliente cli);
 	
 	public Cliente actualizarCliente(Cliente cli);
