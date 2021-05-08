@@ -51,10 +51,11 @@ public class ClienteRest {
 	@GetMapping(path = "/obtenerCliente/{cuit}")
 	@ApiOperation(value = "Busca un cliente por el cuit")
 	public ResponseEntity<Cliente> clientePorCuit(@PathVariable String cuit) {
-		/*Optional<Cliente> c = listaClientesAntigua.stream().filter(unCli -> (unCli.getCuit().equals(cuit)))
-				.findFirst();
-		return ResponseEntity.of(c);*/
-		
+		/*
+		 * Optional<Cliente> c = listaClientesAntigua.stream().filter(unCli ->
+		 * (unCli.getCuit().equals(cuit))) .findFirst(); return ResponseEntity.of(c);
+		 */
+
 		return ResponseEntity.of(clientService.buscarPorCuit(cuit));
 
 	}
@@ -62,11 +63,13 @@ public class ClienteRest {
 	@GetMapping(path = "/obtenerCliente")
 	@ApiOperation(value = "Busca un cliente por la razon social")
 	public ResponseEntity<Cliente> clientePorRazonSocial(@RequestParam(required = false) String razonSocial) {
-		/*Optional<Cliente> c = listaClientesAntigua.stream().filter(unCli -> unCli.getRazonSocial().equals(razonSocial))
-				.findFirst();
-		return ResponseEntity.of(c);*/
+		/*
+		 * Optional<Cliente> c = listaClientesAntigua.stream().filter(unCli ->
+		 * unCli.getRazonSocial().equals(razonSocial)) .findFirst(); return
+		 * ResponseEntity.of(c);
+		 */
 		return ResponseEntity.of(clientService.buscarPorRazonSocial(razonSocial));
-		
+
 	}
 
 	@GetMapping
@@ -75,31 +78,45 @@ public class ClienteRest {
 	}
 
 	@PostMapping
-	public ResponseEntity<Cliente> crear(@RequestBody Cliente nuevo) {
+	public ResponseEntity<Cliente> crear(@RequestBody Cliente nuevoC) {
 		// • Cuando se da de alta un Cliente, se debe indicar al menos una Obra con su
 		// Tipo de Obra
 		// y la información de usuario y clave para crear el usuario.
-		List<Obra> obras = nuevo.getObras();
-		if (obras != null) {
-			Boolean ObrasConSutipo = obras.stream().allMatch(unaObra -> (unaObra.getTipo()!=null));
-			Usuario user = nuevo.getUser();
-			Boolean existeUser = !user.getUser().equals(null);
-			Boolean existePassword = !user.equals(null);
-			Boolean existeTipoUser = !user.getTipoUsuario().equals(null);
-
-			if (ObrasConSutipo && existeUser && existePassword && existeTipoUser) {
-				// El cliente pose una o mas obras con su tipo (obligatorio)
-				// El cliente posee un usuario con toda su informacion (user,password,tipo)
-				nuevo.setId(ID_GEN++);
-
-				if (clientService.guardarCliente(nuevo) != null) {
-					return ResponseEntity.ok(nuevo);
-				}
-
-			}
+		ResponseEntity<Cliente> respEntBadRequest = ResponseEntity.badRequest().build();
+		//Validamos que el cliente exista
+		if (nuevoC == null) {
+			return respEntBadRequest;
 		}
+		List<Obra> obras = nuevoC.getObras();
+		//Validamos que tenga obras
+		if (obras == null) {
+			return respEntBadRequest;
+		}
+		Boolean ObrasConSutipo = obras.stream().allMatch(unaObra -> (unaObra.getTipo() != null));
+		Usuario user = nuevoC.getUser();
+		//Validamos que tenga usuario
+		if (user == null) {
+			return respEntBadRequest;
+		}
+		//Validamos que tenga nombre de usuario
+		Boolean existeNombreUser = user.getUser() != null;
+		if (!existeNombreUser) {
+			return respEntBadRequest;
+		}
+		Boolean existePassword = user.getPassword() != null && !user.getPassword().isBlank();
+		Boolean existeTipoUser = user.getTipoUsuario() != null;
 
-		return ResponseEntity.badRequest().build();
+		if (ObrasConSutipo && existeNombreUser && existePassword && existeTipoUser) {
+			// El cliente pose una o mas obras con su tipo (obligatorio)
+			// El cliente posee un usuario con toda su informacion (user,password,tipo)
+			nuevoC.setId(ID_GEN++);
+
+			if (clientService.guardarCliente(nuevoC) != null) {
+				return ResponseEntity.ok(nuevoC);
+			}
+
+		}
+		return respEntBadRequest;
 
 	}
 
@@ -120,25 +137,24 @@ public class ClienteRest {
 		}
 	}
 
-	
-	// Para dar de baja un cliente, no se puede eliminar si ya ha realizado algun pedido, por lo 
-	// que en ese caso, debe agregar un atributo, "fechaBaja" y asignarle una fecha. Todos los 
+	// Para dar de baja un cliente, no se puede eliminar si ya ha realizado algun
+	// pedido, por lo
+	// que en ese caso, debe agregar un atributo, "fechaBaja" y asignarle una fecha.
+	// Todos los
 	// clientes activos son aquellos que no tienen fechaBaja (o es null)
 	@DeleteMapping(path = "/{id}")
 	public ResponseEntity<Cliente> borrar(@PathVariable Integer id) {
-		
-		
+
 		this.clientService.borrarCliente(this.clientService.buscarPorId(id).get());
 		return ResponseEntity.ok().build();
-		/*OptionalInt indexOpt = IntStream.range(0, listaClientesAntigua.size())
-				.filter(i -> listaClientesAntigua.get(i).getId().equals(id)).findFirst();
-
-		if (indexOpt.isPresent()) {
-			listaClientesAntigua.remove(indexOpt.getAsInt());
-			return ResponseEntity.ok().build();
-		} else {
-			return ResponseEntity.notFound().build();
-		}*/
+		/*
+		 * OptionalInt indexOpt = IntStream.range(0, listaClientesAntigua.size())
+		 * .filter(i -> listaClientesAntigua.get(i).getId().equals(id)).findFirst();
+		 * 
+		 * if (indexOpt.isPresent()) { listaClientesAntigua.remove(indexOpt.getAsInt());
+		 * return ResponseEntity.ok().build(); } else { return
+		 * ResponseEntity.notFound().build(); }
+		 */
 	}
 
 }
