@@ -19,6 +19,7 @@ public class ClientServiceImp implements ClientService {
 
 	private static String API_REST_PEDIDO = "http://localhost:8080/api";
 	private static String ENDPOINT_PEDIDO = "/pedido";
+	
 
 	@Autowired
 	ClienteRepository clienteRepo;
@@ -45,7 +46,7 @@ public class ClientServiceImp implements ClientService {
 				return optcl;
 			}
 		}
-		return null;
+		return Optional.empty();
 
 	}
 
