@@ -10,12 +10,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,17 +32,11 @@ import dan.ms.usuarios.services.interfaces.ClientService;
 public class ClientServiceImpTest {
 	private String API_REST_PEDIDO = "http://localhost:8080/api/pedido";
 
-	// @MockBean
-	// private RiesgoBCRAService riesgoBCRA;
-
-	// @Autowired
-	// private ClienteRepository clienteRepo;
-	
 
 	@Autowired
 	private ClientService clientService;
 
-	// Test unitario- creo???
+	// Test de integracion con DB/repositorio
 	@Test
 	public void guardarCliente() {
 		Obra o1 = new Obra();
@@ -57,7 +53,7 @@ public class ClientServiceImpTest {
 		assertEquals(c1, cReturn);
 	}
 
-	// Test de intergracion
+	// Test de intergracion con DB/repositorio
 	@Test
 	public void buscarCliente() {
 		// Cliente 1
@@ -90,7 +86,7 @@ public class ClientServiceImpTest {
 
 	}
 
-	// Test de intergracion
+	// Test de intergracion con DB/repositorio
 	@Test
 	public void buscarCliente_DadoDeBaja() {
 		Obra o1 = new Obra();
@@ -118,6 +114,36 @@ public class ClientServiceImpTest {
 		Optional<Cliente> optC3 = clientService.buscarPorRazonSocial(c1.getRazonSocial());
 		assertEquals(Optional.empty(), optC3);// No debe encontrarlo porque esta dado de baja
 	}
+	//TODO: NO SE COMO IMPLEMENTAR ESTE TEST:
+	@Disabled
+	public void borrarCliente_sinPedidos() {
+		//Crear cliente
+		TipoUsuario tipoUsr = new TipoUsuario(1, "Cliente");
+		Usuario usr = new Usuario(1, "HomeroJ", "siempreViva", tipoUsr);
+		Cliente c1 = new Cliente(1, "Cliente01", "20395783698", "Homero@gmail.com", 
+				50000, true, null, usr, null);// Cliente dado de baja porque tiene fecha de baja
 
+		// Persisto el cliente
+		clientService.guardarCliente(c1);
+		
+		//Crear microservicio pedido falso.
+		
+		RestTemplate cliRest= new RestTemplate();
+		
+		MockRestServiceServer server = MockRestServiceServer.bindTo(cliRest).build();
+		
+		server.expect(requestTo(API_REST_PEDIDO+"?idCliente=" + c1.getId()))
+				.andExpect(method(HttpMethod.GET))
+				.andRespond(withSuccess("",MediaType.APPLICATION_JSON));
+		
+		// Borro cliente
+		clientService.borrarCliente(c1);
+		//Busco cliente
+		Optional<Cliente> clienteBorrado = clientService.buscarPorId(c1.getId());
+		assertEquals(Optional.empty(), clienteBorrado);		
+				
+	
+
+	}
 
 }
