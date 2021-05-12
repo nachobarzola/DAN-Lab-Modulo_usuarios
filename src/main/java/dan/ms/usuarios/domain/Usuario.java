@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Usuario {
@@ -14,6 +16,9 @@ public class Usuario {
 	private Integer id;
 	private String user;
 	private String password;
+	
+	@ManyToOne
+	@JoinColumn(name="ID_TIPO_USUARIO")
 	private TipoUsuario tipoUsuario;
 	
 	public Usuario(Integer id, String user, String password, TipoUsuario tipoUsuario) {

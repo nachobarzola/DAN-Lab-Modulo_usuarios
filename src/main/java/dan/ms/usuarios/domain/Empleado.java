@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Empleado {
@@ -13,6 +15,9 @@ public class Empleado {
 	@Column(name="ID_EMPLEADO")
 	private Integer id;
 	private String mail;
+	
+	@OneToOne
+	@JoinColumn(name="ID_USUARIO")
 	private Usuario user;
 	
 	public Empleado(Integer id, String mail, Usuario user) {

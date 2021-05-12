@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Obra {
@@ -17,7 +19,13 @@ public class Obra {
 	private Float longitud;
 	private String direccion;
 	private Integer superficie;
+	
+	@ManyToOne
+	@JoinColumn(name="ID_CLIENTE")
 	private Cliente cliente;
+	
+	@ManyToOne
+	@JoinColumn(name="ID_TIPO_OBRA")
 	private TipoObra tipo;
 	
 	public Obra(Integer id, String descripcion, Float latitud, Float longitud, String direccion, Integer superficie,

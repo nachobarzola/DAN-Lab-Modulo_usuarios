@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 
@@ -23,8 +24,14 @@ public class Cliente {
 	private String mail;
 	private Integer maxCuentaCorriente;
 	private Boolean habilitadoOnline;
+	
+	@OneToMany(mappedBy = "cliente")
 	private List<Obra> obras;
+	
+	@OneToOne
+	@JoinColumn(name="ID_USUARIO")
 	private Usuario user;
+
 	private Date fechaBaja;
 	
 	public Cliente(Integer id, String razonSocial, String cuit, String mail, Integer maxCuentaCorriente,
