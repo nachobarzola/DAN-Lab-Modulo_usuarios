@@ -9,8 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import dan.ms.persistence.repositories.ClienteRepository;
 import dan.ms.usuarios.domain.Cliente;
+import dan.ms.usuarios.services.dao.ClienteRepository;
+import dan.ms.usuarios.services.dao.UsuarioRepository;
 import dan.ms.usuarios.services.interfaces.ClientService;
 import dan.ms.usuarios.services.interfaces.RiesgoBCRAService;
 
@@ -23,6 +24,8 @@ public class ClientServiceImp implements ClientService {
 
 	@Autowired
 	ClienteRepository clienteRepo;
+	@Autowired
+	UsuarioRepository usuarioRepo;
 
 	@Autowired
 	RiesgoBCRAService riesgoBcra;
@@ -52,7 +55,7 @@ public class ClientServiceImp implements ClientService {
 
 	@Override
 	public Optional<Cliente> buscarPorCuit(String cuit) {
-		Optional<Cliente> optCliente = this.clienteRepo.findByCuit(cuit);
+		Optional<Cliente> optCliente = Optional.of(this.clienteRepo.findByCuit(cuit));
 
 		if (optCliente.isPresent()) {
 			if (!dadoDeBaja(optCliente.get())) {
@@ -65,7 +68,7 @@ public class ClientServiceImp implements ClientService {
 
 	@Override
 	public Optional<Cliente> buscarPorRazonSocial(String razonSocial) {
-		Optional<Cliente> optCliente = this.clienteRepo.findByRazonSocial(razonSocial);
+		Optional<Cliente> optCliente = Optional.of(clienteRepo.findByRazonSocial(razonSocial));
 
 		if (optCliente.isPresent()) {
 			if (!dadoDeBaja(optCliente.get())) {
