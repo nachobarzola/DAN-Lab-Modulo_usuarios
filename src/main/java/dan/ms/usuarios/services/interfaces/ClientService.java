@@ -7,7 +7,7 @@ import dan.ms.usuarios.domain.Cliente;
 
 public interface ClientService {
 
-	public Cliente guardarCliente(Cliente cli);
+	public Optional<Cliente> guardarCliente(Cliente cli);
 
 	public Optional<Cliente> buscarPorId(Integer id);
 	

@@ -31,12 +31,12 @@ public class ClientServiceImp implements ClientService {
 	RiesgoBCRAService riesgoBcra;
 
 	@Override
-	public Cliente guardarCliente(Cliente clienteNuevo) {
+	public Optional<Cliente> guardarCliente(Cliente clienteNuevo) {
 
 		if (tieneRiesgoCrediticio(clienteNuevo)) {
-			return null;
+			return Optional.empty();
 		}
-		return this.clienteRepo.save(clienteNuevo);
+		return Optional.of(clienteRepo.save(clienteNuevo));
 	}
 
 	@Override
