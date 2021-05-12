@@ -1,6 +1,16 @@
 package dan.ms.usuarios.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 public class Obra {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY) //valor autonumerico
+	@Column(name="ID_OBRA")
 	private Integer id;
 	private String descripcion;
 	private Float latitud;
