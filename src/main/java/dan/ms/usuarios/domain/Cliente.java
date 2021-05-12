@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
 @Entity
@@ -32,6 +34,7 @@ public class Cliente {
 	@JoinColumn(name="ID_USUARIO")
 	private Usuario user;
 
+	@Temporal(TemporalType.DATE)
 	private Date fechaBaja;
 	
 	public Cliente(Integer id, String razonSocial, String cuit, String mail, Integer maxCuentaCorriente,
