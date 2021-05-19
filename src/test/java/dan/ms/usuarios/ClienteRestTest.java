@@ -62,8 +62,8 @@ class ClienteRestTest {
 		List<Obra> obras = new ArrayList<>();
 		obras.add(o1);
 		TipoUsuario tipoUsr = new TipoUsuario(1, "Cliente");
-		Usuario usr = new Usuario(1, "HomeroJ", "siempreViva", tipoUsr);
-		Cliente cNuevo = new Cliente(1, "Cliente01", "20395783698", "Homero@gmail.com", 50000, true, obras, usr, null);
+		Usuario usr = new Usuario("HomeroJ", "siempreViva", tipoUsr);
+		Cliente cNuevo = new Cliente("Cliente01", "20395783698", "Homero@gmail.com", 50000, true, obras, usr, null);
 
 		HttpEntity<Cliente> requestCliente = new HttpEntity<>(cNuevo);
 		ResponseEntity<Cliente> respuesta = restTemplate.exchange(server, HttpMethod.POST, requestCliente,
@@ -90,8 +90,8 @@ class ClienteRestTest {
 		List<Obra> obras = new ArrayList<>();
 		obras.add(o1);
 		TipoUsuario tipoUsr = new TipoUsuario(1, "Cliente");
-		Usuario usr = new Usuario(2, "LisaJ", "siempreViva123", tipoUsr);
-		Cliente cNuevo = new Cliente(2, "Cliente02", "20874596216", "Lisa@gmail.com", 21, true, obras, usr, null);
+		Usuario usr = new Usuario("LisaJ", "siempreViva123", tipoUsr);
+		Cliente cNuevo = new Cliente("Cliente02", "20874596216", "Lisa@gmail.com", 21, true, obras, usr, null);
 
 		HttpEntity<Cliente> requestCliente = new HttpEntity<>(cNuevo);
 		ResponseEntity<Cliente> respuesta = testRestTemplate.exchange(server, HttpMethod.POST, requestCliente,
@@ -115,8 +115,8 @@ class ClienteRestTest {
 		List<Obra> obras = new ArrayList<>();
 		obras.add(o1);
 		// TipoUsuario tipoUsr = new TipoUsuario(1, "Cliente"); FALTA ESTO!!
-		Usuario usr = new Usuario(3, "BarS", "siempreVivaPat", null);
-		Cliente cNuevo = new Cliente(3, "Cliente03", "20214862465", "Bar@live.com.ar", 666, true, obras, usr, null);
+		Usuario usr = new Usuario("BarS", "siempreVivaPat", null);
+		Cliente cNuevo = new Cliente("Cliente03", "20214862465", "Bar@live.com.ar", 666, true, obras, usr, null);
 
 		HttpEntity<Cliente> requestCliente = new HttpEntity<>(cNuevo);
 		ResponseEntity<Cliente> respuesta = testRestTemplate.exchange(server, HttpMethod.POST, requestCliente,
@@ -141,7 +141,7 @@ class ClienteRestTest {
 		obras.add(o1);
 		// TipoUsuario tipoUsr = new TipoUsuario(1, "Cliente");
 		// Usuario usr = new Usuario(1, "HomeroJ", "siempreViva", tipoUsr); FALTA ESTO!!
-		Cliente cNuevo = new Cliente(4, "Cliente04", "20415789639", "Patricio@gmail.com", 111, true, obras, null, null);
+		Cliente cNuevo = new Cliente("Cliente04", "20415789639", "Patricio@gmail.com", 111, true, obras, null, null);
 
 		HttpEntity<Cliente> requestCliente = new HttpEntity<>(cNuevo);
 		ResponseEntity<Cliente> respuesta = testRestTemplate.exchange(server, HttpMethod.POST, requestCliente,
@@ -166,8 +166,8 @@ class ClienteRestTest {
 		obras.add(o1);
 		TipoUsuario tipoUsr = new TipoUsuario(1, "Cliente");
 		String password = null; // FALTA ESTO!!
-		Usuario usr = new Usuario(5, "ayudanteDeSanta", password, tipoUsr);
-		Cliente cNuevo = new Cliente(5, "Cliente05", "20395783698", "ayudSanta@gmail.com", 123, true, obras, usr, null);
+		Usuario usr = new Usuario("ayudanteDeSanta", password, tipoUsr);
+		Cliente cNuevo = new Cliente("Cliente05", "20395783698", "ayudSanta@gmail.com", 123, true, obras, usr, null);
 
 		HttpEntity<Cliente> requestCliente = new HttpEntity<>(cNuevo);
 		ResponseEntity<Cliente> respuesta = testRestTemplate.exchange(server, HttpMethod.POST, requestCliente,
@@ -208,7 +208,7 @@ class ClienteRestTest {
 		List<Obra> obras = new ArrayList<>();
 		obras.add(o1);
 		Usuario usr = null;
-		Cliente cNuevo = new Cliente(5, "Cliente05", "20395783698", "ayudSanta@gmail.com", 123, true, obras, usr, null);
+		Cliente cNuevo = new Cliente("Cliente05", "20395783698", "ayudSanta@gmail.com", 123, true, obras, usr, null);
 
 		HttpEntity<Cliente> requestCliente = new HttpEntity<>(cNuevo);
 		ResponseEntity<Cliente> respuesta = testRestTemplate.exchange(server, HttpMethod.POST, requestCliente,
@@ -228,8 +228,8 @@ class ClienteRestTest {
 		List<Obra> obras = null;
 		TipoUsuario tipoUsr = new TipoUsuario(1, "Cliente");
 		String password = null; // FALTA ESTO!!
-		Usuario usr = new Usuario(5, "ayudanteDeSanta", password, tipoUsr);
-		Cliente cNuevo = new Cliente(5, "Cliente05", "20395783698", "ayudSanta@gmail.com", 123, true, obras, usr, null);
+		Usuario usr = new Usuario("ayudanteDeSanta", password, tipoUsr);
+		Cliente cNuevo = new Cliente("Cliente05", "20395783698", "ayudSanta@gmail.com", 123, true, obras, usr, null);
 
 		HttpEntity<Cliente> requestCliente = new HttpEntity<>(cNuevo);
 		ResponseEntity<Cliente> respuesta = testRestTemplate.exchange(server, HttpMethod.POST, requestCliente,
@@ -248,8 +248,8 @@ class ClienteRestTest {
 		List<Obra> obras = new ArrayList<>();
 		obras.add(o1);
 		TipoUsuario tipoUsr = new TipoUsuario(1, "Cliente");
-		Usuario usr = new Usuario(66, "Franco", "Suipacha", tipoUsr);
-		Cliente cNuevo = new Cliente(66, "Cliente66", "20395783698", "franco@gmail.com", 222, true, obras, usr, null);
+		Usuario usr = new Usuario("Franco", "Suipacha", tipoUsr);
+		Cliente cNuevo = new Cliente("Cliente66", "20395783698", "franco@gmail.com", 222, true, obras, usr, null);
 		// -----------------------------------------------------
 		// Persisto el cliente
 		clienteService.guardarCliente(cNuevo);
@@ -295,8 +295,8 @@ class ClienteRestTest {
 		List<Obra> obras = new ArrayList<>();
 		obras.add(o1);
 		TipoUsuario tipoUsr = new TipoUsuario(1, "Cliente");
-		Usuario usr = new Usuario(7, "Gato", "Bv Galves", tipoUsr);
-		Cliente cNuevo = new Cliente(7, "Cliente7", "2078965236696", "gato@gmail.com", 222, true, obras, usr, null);
+		Usuario usr = new Usuario("Gato", "Bv Galves", tipoUsr);
+		Cliente cNuevo = new Cliente("Cliente7", "2078965236696", "gato@gmail.com", 222, true, obras, usr, null);
 		// -----------------------------------------------------
 		// Persisto el cliente
 		clienteService.guardarCliente(cNuevo);

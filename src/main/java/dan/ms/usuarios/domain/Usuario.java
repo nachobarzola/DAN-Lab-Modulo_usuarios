@@ -14,6 +14,7 @@ public class Usuario {
 	@GeneratedValue(strategy = GenerationType.IDENTITY) //valor autonumerico
 	@Column(name="ID_USUARIO")
 	private Integer id;
+	
 	private String user;
 	private String password;
 	
@@ -21,9 +22,8 @@ public class Usuario {
 	@JoinColumn(name="ID_TIPO_USUARIO")
 	private TipoUsuario tipoUsuario;
 	
-	public Usuario(Integer id, String user, String password, TipoUsuario tipoUsuario) {
+	public Usuario(String user, String password, TipoUsuario tipoUsuario) {
 		super();
-		this.id = id;
 		this.user = user;
 		this.password = password;
 		this.tipoUsuario = tipoUsuario;

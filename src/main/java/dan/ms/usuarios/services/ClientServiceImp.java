@@ -2,6 +2,7 @@ package dan.ms.usuarios.services;
 
 import java.util.Date;
 import java.util.Optional;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -10,10 +11,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import dan.ms.usuarios.domain.Cliente;
+import dan.ms.usuarios.domain.Obra;
+import dan.ms.usuarios.domain.Usuario;
 import dan.ms.usuarios.services.dao.ClienteRepository;
 import dan.ms.usuarios.services.dao.UsuarioRepository;
 import dan.ms.usuarios.services.interfaces.ClientService;
+import dan.ms.usuarios.services.interfaces.ObraService;
 import dan.ms.usuarios.services.interfaces.RiesgoBCRAService;
+import dan.ms.usuarios.services.interfaces.UsuarioService;
 
 @Service
 public class ClientServiceImp implements ClientService {
@@ -22,21 +27,50 @@ public class ClientServiceImp implements ClientService {
 	private static String ENDPOINT_PEDIDO = "/pedido";
 	
 
+	//-------------Repositories
 	@Autowired
 	ClienteRepository clienteRepo;
+	
+	//-------------SERVICES
 	@Autowired
-	UsuarioRepository usuarioRepo;
+	ObraService obraService;
+	
+	@Autowired
+	UsuarioService usuarioService;
 
 	@Autowired
 	RiesgoBCRAService riesgoBcra;
 
 	@Override
 	public Optional<Cliente> guardarCliente(Cliente clienteNuevo) {
-
 		if (tieneRiesgoCrediticio(clienteNuevo)) {
 			return Optional.empty();
 		}
-		return Optional.of(clienteRepo.save(clienteNuevo));
+		//Guardamos el asuario del cliente
+		Optional<Usuario> optUsuario = usuarioService.guardarUsuario(clienteNuevo.getUser());
+		if(optUsuario.isEmpty()) {
+			//No puedo guardar el usuario
+			return Optional.empty();
+		}
+		//Asignamos el usuario guardado al cliente
+		clienteNuevo.setUser(optUsuario.get());
+		
+		//Guardamos el cliente
+		Cliente clienteNuevoReturn = clienteRepo.save(clienteNuevo);
+		if( clienteNuevoReturn == null) {
+			//No puedo guardar el cliente
+			return Optional.empty();
+		}
+		//Guardamos las obras del cliente
+		List<Obra> listaObrasReturn = obraService.guardarObras(clienteNuevo.getObras());
+		if(listaObrasReturn == null) {
+			//No puedo guardar las obras
+			return Optional.empty();
+		}
+		//Asiganmos la obras al cliente
+		clienteNuevoReturn.setObras(listaObrasReturn);
+	
+		return Optional.of(clienteNuevoReturn);
 	}
 
 	@Override

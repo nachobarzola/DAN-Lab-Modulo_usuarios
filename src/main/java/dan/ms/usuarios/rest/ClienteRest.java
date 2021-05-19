@@ -111,8 +111,10 @@ public class ClienteRest {
 			// El cliente posee un usuario con toda su informacion (user,password,tipo)
 			nuevoC.setId(ID_GEN++);
 
-			if (clientService.guardarCliente(nuevoC) != null) {
-				return ResponseEntity.ok(nuevoC);
+			Optional<Cliente> optClienteReturn = clientService.guardarCliente(nuevoC);
+			System.out.println("[Debug-ClienteRest-Mtdo: crear] El cliente retornado es nulo: "+optClienteReturn.isEmpty());
+			if (optClienteReturn.isPresent()) {
+				return ResponseEntity.ok(optClienteReturn.get());
 			}
 
 		}

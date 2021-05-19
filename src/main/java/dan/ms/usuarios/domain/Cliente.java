@@ -21,6 +21,7 @@ public class Cliente {
 	@GeneratedValue(strategy = GenerationType.IDENTITY) //valor autonumerico
 	@Column(name="ID_CLIENTE")
 	private Integer id;
+	
 	private String razonSocial;
 	private String cuit;
 	private String mail;
@@ -37,10 +38,9 @@ public class Cliente {
 	@Temporal(TemporalType.DATE)
 	private Date fechaBaja;
 	
-	public Cliente(Integer id, String razonSocial, String cuit, String mail, Integer maxCuentaCorriente,
+	public Cliente(String razonSocial, String cuit, String mail, Integer maxCuentaCorriente,
 			Boolean habilitadoOnline, List<Obra> obras, Usuario user,Date fechaBaja) {
 		super();
-		this.id = id;
 		this.razonSocial = razonSocial;
 		this.cuit = cuit;
 		this.mail = mail;

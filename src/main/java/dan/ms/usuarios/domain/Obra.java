@@ -28,10 +28,9 @@ public class Obra {
 	@JoinColumn(name="ID_TIPO_OBRA")
 	private TipoObra tipo;
 	
-	public Obra(Integer id, String descripcion, Float latitud, Float longitud, String direccion, Integer superficie,
+	public Obra(String descripcion, Float latitud, Float longitud, String direccion, Integer superficie,
 			Cliente cliente, TipoObra tipo) {
 		super();
-		this.id = id;
 		this.descripcion = descripcion;
 		this.latitud = latitud;
 		this.longitud = longitud;

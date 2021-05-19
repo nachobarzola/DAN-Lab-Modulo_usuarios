@@ -45,8 +45,8 @@ public class ClientServiceImpTest {
 		obras.add(o1);
 		obras.add(o2);
 		TipoUsuario tipoUsr = new TipoUsuario(1, "Cliente");
-		Usuario usr = new Usuario(1, "HomeroJ", "siempreViva", tipoUsr);
-		Cliente c1 = new Cliente(1, "Cliente01", "20395783698", "Homero@gmail.com", 50000, true, obras, usr, null);
+		Usuario usr = new Usuario( "HomeroJ", "siempreViva", tipoUsr);
+		Cliente c1 = new Cliente( "Cliente01", "20395783698", "Homero@gmail.com", 50000, true, obras, usr, null);
 
 		// Persisto el cliente
 		Optional<Cliente> cReturn = clientService.guardarCliente(c1);
@@ -63,14 +63,14 @@ public class ClientServiceImpTest {
 		obras.add(o1);
 		obras.add(o2);
 		TipoUsuario tipoUsr = new TipoUsuario(1, "Cliente");
-		Usuario usr = new Usuario(1, "HomeroJ", "siempreViva", tipoUsr);
-		Cliente c1 = new Cliente(1, "Cliente01", "20395783698", "homero@gmail.com", 50000, true, obras, usr, null);
+		Usuario usr = new Usuario( "HomeroJ", "siempreViva", tipoUsr);
+		Cliente c1 = new Cliente("Cliente01", "20395783698", "homero@gmail.com", 50000, true, obras, usr, null);
 		// Cliente 2
-		Usuario usr2 = new Usuario(2, "Bar", "siempreViva123", tipoUsr);
-		Cliente c2 = new Cliente(2, "Cliente02", "20752489659", "bar@gmail.com", 50000, true, obras, usr2, null);
+		Usuario usr2 = new Usuario( "Bar", "siempreViva123", tipoUsr);
+		Cliente c2 = new Cliente( "Cliente02", "20752489659", "bar@gmail.com", 50000, true, obras, usr2, null);
 		// Cliente 3;
-		Usuario usr3 = new Usuario(3, "Lisa", "siempreViva1234", tipoUsr);
-		Cliente c3 = new Cliente(3, "Cliente03", "20741857962", "lisa@gmail.com", 50000, true, obras, usr3, null);
+		Usuario usr3 = new Usuario( "Lisa", "siempreViva1234", tipoUsr);
+		Cliente c3 = new Cliente("Cliente03", "20741857962", "lisa@gmail.com", 50000, true, obras, usr3, null);
 
 		// Persisto a los clientes
 		clientService.guardarCliente(c1);
@@ -95,10 +95,10 @@ public class ClientServiceImpTest {
 		obras.add(o1);
 		obras.add(o2);
 		TipoUsuario tipoUsr = new TipoUsuario(1, "Cliente");
-		Usuario usr = new Usuario(1, "HomeroJ", "siempreViva", tipoUsr);
+		Usuario usr = new Usuario( "HomeroJ", "siempreViva", tipoUsr);
 		Date fechaBaja = new Date(System.currentTimeMillis());
 		// Cliente dado de baja porque tiene fecha de baja
-		Cliente c1 = new Cliente(1, "Cliente01", "20395783698", "Homero@gmail.com", 50000, true, obras, usr, fechaBaja);
+		Cliente c1 = new Cliente( "Cliente01", "20395783698", "Homero@gmail.com", 50000, true, obras, usr, fechaBaja);
 
 		// Persisto el cliente
 		clientService.guardarCliente(c1);
@@ -119,8 +119,8 @@ public class ClientServiceImpTest {
 	public void borrarCliente_sinPedidos() {
 		//Crear cliente
 		TipoUsuario tipoUsr = new TipoUsuario(1, "Cliente");
-		Usuario usr = new Usuario(1, "HomeroJ", "siempreViva", tipoUsr);
-		Cliente c1 = new Cliente(1, "Cliente01", "20395783698", "Homero@gmail.com", 
+		Usuario usr = new Usuario("HomeroJ", "siempreViva", tipoUsr);
+		Cliente c1 = new Cliente("Cliente01", "20395783698", "Homero@gmail.com", 
 				50000, true, null, usr, null);// Cliente dado de baja porque tiene fecha de baja
 
 		// Persisto el cliente
