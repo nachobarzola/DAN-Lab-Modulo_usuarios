@@ -7,11 +7,13 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import dan.ms.usuarios.domain.Cliente;
 import dan.ms.usuarios.domain.Obra;
 import dan.ms.usuarios.domain.TipoObra;
 import dan.ms.usuarios.domain.TipoUsuario;
 import dan.ms.usuarios.services.dao.ObraRepository;
 import dan.ms.usuarios.services.dao.TipoObraRepository;
+import dan.ms.usuarios.services.interfaces.ClientService;
 import dan.ms.usuarios.services.interfaces.ObraService;
 
 @Service
@@ -23,21 +25,52 @@ public class ObraServiceImp implements ObraService{
 	@Autowired
 	TipoObraRepository tipoObraRepo;
 	
+	@Autowired
+	ClientService clienteService;
 	
 	@Override
 	public Optional<Obra> guardarObra(Obra obra) {
+		Obra obraAGuardar = new Obra();
+		obraAGuardar.setDescripcion(obra.getDescripcion());
+		obraAGuardar.setDireccion(obra.getDireccion());
+		obraAGuardar.setLatitud(obra.getLatitud());
+		obraAGuardar.setLongitud(obra.getLongitud());
+		obraAGuardar.setSuperficie(obra.getSuperficie());
+		//----------------------------------------------------------------------
+		//Buscamos el objeto tipoUsuario para asignarselo a la obra
 		Optional<TipoObra> optTipoObra = tipoObraRepo.findById(obra.getTipo().getId());
 		if(optTipoObra.isEmpty()) {
+			//No se encontro el tipo obra
 			return Optional.empty();
 		}
-		//Le asignamos el objeto tipo obra a la clase
-		obra.setTipo(optTipoObra.get());
+		//Le asignamos el objeto tipo obra a la clase obraAGuardar
+		obraAGuardar.setTipo(optTipoObra.get());
+		//----------------------------------------------------------------------
+		//Guardamos el cliente de la obra. 
+		Cliente clienteAsociadoConObra = obra.getCliente();
+		//OJO!!: el cliente ya puede estar guardado, ese caso recuperamos el objeto!
+		Optional<Cliente> optClienteAsociadoConObra = clienteService.buscarPorCuit(clienteAsociadoConObra.getCuit());
+		if(optClienteAsociadoConObra.isPresent()) {
+			//El cliente ya existe, debemos solo asignarselo a la obra
+			obraAGuardar.setCliente(optClienteAsociadoConObra.get());
+		}
+		else {
+			//Guardamos el cliente
+			Optional<Cliente> optClienteReturn =clienteService.guardarClienteSinObrasYUsuario(clienteAsociadoConObra);
+			if(optClienteReturn.isEmpty()) {
+				//No se pudo guardar el cliente asociado
+				return Optional.empty();
+			}
+			obraAGuardar.setCliente(optClienteReturn.get());
+		}
+		
+		//----------------------------------------------------------------------
 		//Guardamos la obra
-		Obra obraReturn = obraRepo.save(obra);
-		if(obraReturn == null) {
+		obraAGuardar = obraRepo.save(obraAGuardar);
+		if(obraAGuardar == null) {
 			return Optional.empty();
 		}
-		return Optional.of(obraReturn);
+		return Optional.of(obraAGuardar);
 	}
 
 

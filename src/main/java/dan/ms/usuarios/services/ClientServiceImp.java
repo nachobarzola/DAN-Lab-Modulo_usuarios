@@ -46,32 +46,49 @@ public class ClientServiceImp implements ClientService {
 		if (tieneRiesgoCrediticio(clienteNuevo)) {
 			return Optional.empty();
 		}
+		//Cliente que voy a guadar al final en la base de datos
+		Cliente clienteAGuardar = new Cliente();
+		clienteAGuardar.setCuit(clienteNuevo.getCuit());
+		clienteAGuardar.setFechaBaja(clienteNuevo.getFechaBaja());
+		clienteAGuardar.setHabilitadoOnline(clienteNuevo.getHabilitadoOnline());
+		clienteAGuardar.setMail(clienteNuevo.getMail());
+		clienteAGuardar.setMaxCuentaCorriente(clienteNuevo.getMaxCuentaCorriente());
+		clienteAGuardar.setRazonSocial(clienteNuevo.getRazonSocial());
+		
 		//Guardamos el asuario del cliente
 		Optional<Usuario> optUsuario = usuarioService.guardarUsuario(clienteNuevo.getUser());
 		if(optUsuario.isEmpty()) {
 			//No puedo guardar el usuario
 			return Optional.empty();
 		}
-		//Asignamos el usuario guardado al cliente
-		clienteNuevo.setUser(optUsuario.get());
+		//Asignamos el usuario guardado al clienteAGuadar
+		clienteAGuardar.setUser(optUsuario.get());
 		
-		//Guardamos el cliente
-		Cliente clienteNuevoReturn = clienteRepo.save(clienteNuevo);
-		if( clienteNuevoReturn == null) {
-			//No puedo guardar el cliente
+		//---------Obra es la dueña de la relacion, obra guarda la relacion con cliente
+		//Por lo tanto primero guardamos el cliente y despues las obras
+		clienteAGuardar = clienteRepo.save(clienteAGuardar);
+		if(clienteAGuardar == null) {
+			//no pudo guardar el cliente
 			return Optional.empty();
 		}
-		//Guardamos las obras del cliente
+		//Guardamos las obras
 		List<Obra> listaObrasReturn = obraService.guardarObras(clienteNuevo.getObras());
 		if(listaObrasReturn == null) {
-			//No puedo guardar las obras
+			//no pudo guardar la lista de obras
 			return Optional.empty();
 		}
-		//Asiganmos la obras al cliente
-		clienteNuevoReturn.setObras(listaObrasReturn);
-	
-		return Optional.of(clienteNuevoReturn);
+		//Le asignamos las obras al clinteAGuardar para que quede consiste el modelo de objetos
+		clienteAGuardar.setObras(listaObrasReturn);
+		
+		return Optional.of(clienteAGuardar);
 	}
+	@Override
+	public Optional<Cliente> guardarClienteSinObrasYUsuario(Cliente cli){
+		
+		return null;
+	}
+	
+	
 
 	@Override
 	public Optional<Cliente> buscarPorId(Integer id) {
