@@ -8,6 +8,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+
 @Entity
 public class Obra {
 	@Id
@@ -22,6 +25,7 @@ public class Obra {
 	
 	@ManyToOne
 	@JoinColumn(name="ID_CLIENTE")
+	@JsonBackReference
 	private Cliente cliente;
 	
 	@ManyToOne

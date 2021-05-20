@@ -15,6 +15,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 public class Cliente {
 	@Id
@@ -29,6 +31,7 @@ public class Cliente {
 	private Boolean habilitadoOnline;
 	
 	@OneToMany(mappedBy = "cliente")
+	@JsonManagedReference
 	private List<Obra> obras;
 	
 	@OneToOne
