@@ -230,7 +230,7 @@ public class ClientServiceImpTest {
 		assertEquals(Optional.empty(), optC3);// No debe encontrarlo porque esta dado de baja
 	}
 
-	// TODO: NO SE COMO IMPLEMENTAR ESTE TEST:
+	// TODO: NO SE COMO IMPLEMENTAR ESTE TEST: deberia de alguna forma mockear el microservicio pedido.
 	@Disabled
 	public void borrarCliente_sinPedidos() {
 		// Crear cliente
@@ -243,8 +243,7 @@ public class ClientServiceImpTest {
 																												// porque
 																												// tiene
 																												// fecha
-																												// de
-																												// baja
+																																																	// baja
 
 		// Persisto el cliente
 		clientService.guardarCliente(c1);

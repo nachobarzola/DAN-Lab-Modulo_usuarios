@@ -347,8 +347,8 @@ class ClienteRestTest {
 
 	}
 
-	// Todo: Me pasa lo mismo que clienteServiceImpTest no se como intergrar
-	// microservicios
+	// TODO: Me pasa lo mismo que clienteServiceImpTest no se como intergrar
+	// microservicios, deberia de alguna forma mockear el microservicio pedido.
 	@Disabled
 	void borrar_cliente() {
 		// -------------------Creamos el cliente
