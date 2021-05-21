@@ -16,7 +16,7 @@ public interface ClientService {
 	
 	public Optional<Cliente> buscarPorRazonSocial(String razonSocial);
 	
-	public void borrarCliente(Cliente cli);
+	public Boolean borrarCliente(Cliente cli);
 	
 	public Optional<Cliente> actualizarCliente(Cliente cli);
 	

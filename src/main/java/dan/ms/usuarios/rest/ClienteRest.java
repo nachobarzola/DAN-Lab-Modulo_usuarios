@@ -69,22 +69,22 @@ public class ClienteRest {
 		// Tipo de Obra
 		// y la información de usuario y clave para crear el usuario.
 		ResponseEntity<Cliente> respEntBadRequest = ResponseEntity.badRequest().build();
-		//Validamos que el cliente exista
+		// Validamos que el cliente exista
 		if (nuevoC == null) {
 			return respEntBadRequest;
 		}
 		List<Obra> obras = nuevoC.getObras();
-		//Validamos que tenga obras
+		// Validamos que tenga obras
 		if (obras == null) {
 			return respEntBadRequest;
 		}
 		Boolean ObrasConSutipo = obras.stream().allMatch(unaObra -> (unaObra.getTipo() != null));
 		Usuario user = nuevoC.getUser();
-		//Validamos que tenga usuario
+		// Validamos que tenga usuario
 		if (user == null) {
 			return respEntBadRequest;
 		}
-		//Validamos que tenga nombre de usuario
+		// Validamos que tenga nombre de usuario
 		Boolean existeNombreUser = user.getUser() != null;
 		if (!existeNombreUser) {
 			return respEntBadRequest;
@@ -98,7 +98,8 @@ public class ClienteRest {
 			nuevoC.setId(ID_GEN++);
 
 			Optional<Cliente> optClienteReturn = clientService.guardarCliente(nuevoC);
-			System.out.println("[Debug-ClienteRest-Mtdo: crear] El cliente retornado es nulo: "+optClienteReturn.isEmpty());
+			System.out.println(
+					"[Debug-ClienteRest-Mtdo: crear] El cliente retornado es nulo: " + optClienteReturn.isEmpty());
 			if (optClienteReturn.isPresent()) {
 				return ResponseEntity.ok(optClienteReturn.get());
 			}
@@ -131,10 +132,27 @@ public class ClienteRest {
 	// Todos los
 	// clientes activos son aquellos que no tienen fechaBaja (o es null)
 	@DeleteMapping(path = "/{id}")
+	@ApiOperation(value = "Borrar un cliente")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Borrado correctamente"),
+			@ApiResponse(code = 400, message = "El cliente no existe, ingrese id valida"),
+			@ApiResponse(code = 404, message = "Hubo un error al borrar") })
 	public ResponseEntity<Cliente> borrar(@PathVariable Integer id) {
-		this.clientService.borrarCliente(this.clientService.buscarPorId(id).get());
-		return ResponseEntity.ok().build();
-		
+		Optional<Cliente> optClienteABorrar = this.clientService.buscarPorId(id);
+		if (optClienteABorrar.isPresent()) {
+			Boolean borrado = this.clientService.borrarCliente(optClienteABorrar.get());
+			if (borrado) {
+				//Se borro correctamente
+				return ResponseEntity.of(optClienteABorrar);
+			} 
+			else {
+				//Error al intentar borrar
+				return ResponseEntity.notFound().build();
+			}
+		} 
+		else {
+			//El cliente no existe
+			return ResponseEntity.badRequest().build();
+		}
 	}
 
 }

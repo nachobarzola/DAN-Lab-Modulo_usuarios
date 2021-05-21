@@ -1,7 +1,9 @@
 package dan.ms.usuarios;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.Profile;
@@ -36,6 +39,7 @@ import dan.ms.usuarios.services.dao.ClienteRepository;
 import dan.ms.usuarios.services.dao.ObraRepository;
 import dan.ms.usuarios.services.dao.UsuarioRepository;
 import dan.ms.usuarios.services.interfaces.ClientService;
+import dan.ms.usuarios.services.interfaces.PedidoRestExternoService;
 import springfox.documentation.spring.web.json.Json;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -62,6 +66,9 @@ class ClienteRestTest {
 
 	@Autowired
 	ClienteRepository clienteRepo;
+
+	@MockBean
+	PedidoRestExternoService pedidoRestExternoService;
 
 	@BeforeEach
 	public void limpiarRepositorios() {
@@ -340,33 +347,137 @@ class ClienteRestTest {
 		// Busco el cliente por razonSocial---------------------------
 		String serverConRazonSocial = "http://localhost:" + puerto + ENDPOINT_CLIENTE + "/obtenerCliente?razonSocial="
 				+ cNuevo.getRazonSocial();
-		
+
 		ResponseEntity<Cliente> respuesta2 = testRestTemplate.exchange(serverConRazonSocial, HttpMethod.GET, null,
 				Cliente.class);
 		assertTrue(respuesta2.getStatusCode().equals(HttpStatus.OK));
 
 	}
 
-	// TODO: Me pasa lo mismo que clienteServiceImpTest no se como intergrar
-	// microservicios, deberia de alguna forma mockear el microservicio pedido.
-	@Disabled
-	void borrar_cliente() {
-		// -------------------Creamos el cliente
+	@Test
+	void borrar_cliente_sinPedidos() {
+		// Tipos necesarios
+		TipoUsuario tipoUsr = new TipoUsuario(1, "Cliente");
+		TipoObra tipoObra1 = new TipoObra(1, "REFORMA");
+		TipoObra tipoObra2 = new TipoObra(2, "CASA");
+		// -----Obra1
 		Obra o1 = new Obra();
-		o1.setTipo(new TipoObra(1, "REFORMA"));
+		o1.setDescripcion("Una obra chiquita");
+		o1.setDireccion("Bv Galvez");
+		o1.setLatitud(Float.valueOf(1225));
+		o1.setLongitud(Float.valueOf(1225));
+		o1.setSuperficie(100);
+		o1.setTipo(tipoObra1);
+		// --------------
+		// -----Obra2
+		Obra o2 = new Obra();
+		o2.setDescripcion("Una obra muy grande");
+		o2.setDireccion("Av San Juan");
+		o2.setLatitud(Float.valueOf(1225));
+		o2.setLongitud(Float.valueOf(1225));
+		o2.setSuperficie(9999999);
+		o2.setTipo(tipoObra2);
+		// ---------------------
 		List<Obra> obras = new ArrayList<>();
 		obras.add(o1);
+		obras.add(o2);
+		// -----------------------------
+		Usuario usr = new Usuario("HomeroJ", "siempreViva", tipoUsr);
+		Cliente c1 = new Cliente("Cliente01", "20395783698", "Homero@gmail.com", 50000, true, null, usr, null);
+		// Setenmos la obra a su cliente
+		o1.setCliente(c1);
+		o2.setCliente(c1);
+		c1.setObras(obras);
+
+		// Persisto el cliente usando el service que me resuelve la complejidad de guardar las obras y los usuarios
+		c1 = clienteService.guardarCliente(c1).get();
+
+		// No tiene pedidos
+		when(pedidoRestExternoService.tienePedidos(c1.getId())).thenReturn(false);
+		//
+		String serverConId = "http://localhost:" + puerto + ENDPOINT_CLIENTE + "/" + c1.getId();
+
+		ResponseEntity<Cliente> respuesta = testRestTemplate.exchange(serverConId, HttpMethod.DELETE, null,
+				Cliente.class);
+		assertTrue(respuesta.getStatusCode().equals(HttpStatus.OK));
+
+		// Si no tiene pedidos no debe existir en el repositorio
+		// Busco cliente
+		Optional<Cliente> clienteBorrado = clienteRepo.findById(c1.getId());
+		assertTrue(clienteBorrado.isEmpty());
+
+	}
+	@Test
+	void borrar_cliente_conPedidos() {
+		// Tipos necesarios
 		TipoUsuario tipoUsr = new TipoUsuario(1, "Cliente");
-		Usuario usr = new Usuario("Gato", "Bv Galves", tipoUsr);
-		Cliente cNuevo = new Cliente("Cliente7", "2078965236696", "gato@gmail.com", 222, true, obras, usr, null);
-		// -----------------------------------------------------
-		// Persisto el cliente
-		clienteService.guardarCliente(cNuevo);
-		// String serverConId = "http://localhost:" + puerto + ENDPOINT_CLIENTE + "/" +
-		// 7;
-		// ResponseEntity<Cliente> respuesta = testRestTemplate.exchange(serverConId,
-		// HttpMethod.DELETE, null, Cliente.class);
-		// assertTrue(respuesta.getStatusCode().equals(HttpStatus.OK));
+		TipoObra tipoObra1 = new TipoObra(1, "REFORMA");
+		TipoObra tipoObra2 = new TipoObra(2, "CASA");
+		// -----Obra1
+		Obra o1 = new Obra();
+		o1.setDescripcion("Una obra chiquita");
+		o1.setDireccion("Bv Galvez");
+		o1.setLatitud(Float.valueOf(1225));
+		o1.setLongitud(Float.valueOf(1225));
+		o1.setSuperficie(100);
+		o1.setTipo(tipoObra1);
+		// --------------
+		// -----Obra2
+		Obra o2 = new Obra();
+		o2.setDescripcion("Una obra muy grande");
+		o2.setDireccion("Av San Juan");
+		o2.setLatitud(Float.valueOf(1225));
+		o2.setLongitud(Float.valueOf(1225));
+		o2.setSuperficie(9999999);
+		o2.setTipo(tipoObra2);
+		// ---------------------
+		List<Obra> obras = new ArrayList<>();
+		obras.add(o1);
+		obras.add(o2);
+		// -----------------------------
+		Usuario usr = new Usuario("HomeroJ", "siempreViva", tipoUsr);
+		Cliente c1 = new Cliente("Cliente01", "20395783698", "Homero@gmail.com", 50000, true, null, usr, null);
+		// Setenmos la obra a su cliente
+		o1.setCliente(c1);
+		o2.setCliente(c1);
+		c1.setObras(obras);
+
+		// Persisto el cliente usando el service que me resuelve la complejidad de guardar las obras y los usuarios
+		c1 = clienteService.guardarCliente(c1).get();
+
+		//Tiene pedidos
+		when(pedidoRestExternoService.tienePedidos(c1.getId())).thenReturn(true);
+		//
+		String serverConId = "http://localhost:" + puerto + ENDPOINT_CLIENTE + "/" + c1.getId();
+
+		ResponseEntity<Cliente> respuesta = testRestTemplate.exchange(serverConId, HttpMethod.DELETE, null,
+				Cliente.class);
+		assertTrue(respuesta.getStatusCode().equals(HttpStatus.OK));
+
+		// Al tener pedidos no se borra del repositorio y se le adjunta fecha de baja
+		// Busco cliente
+		Optional<Cliente> optClienteBorrado = clienteRepo.findById(c1.getId());
+		assertTrue(optClienteBorrado.isPresent());
+		assertNotNull(optClienteBorrado.get().getFechaBaja());
+
+	}
+	@Test
+	void borrar_cliente_NoExiste_respuesta_BadRequest() {
+		Integer idClientePrueba = 234;
+		//Tiene pedidos
+		when(pedidoRestExternoService.tienePedidos(idClientePrueba)).thenReturn(true);
+		//
+		String serverConId = "http://localhost:" + puerto + ENDPOINT_CLIENTE + "/" + idClientePrueba;
+
+		ResponseEntity<Cliente> respuesta = testRestTemplate.exchange(serverConId, HttpMethod.DELETE, null,
+				Cliente.class);
+		assertTrue(respuesta.getStatusCode().equals(HttpStatus.BAD_REQUEST));
+
+		// Al tener pedidos no se borra del repositorio y se le adjunta fecha de baja
+		// Busco cliente
+		Optional<Cliente> optClienteBorrado = clienteRepo.findById(idClientePrueba);
+		assertTrue(optClienteBorrado.isEmpty());
+
 
 	}
 

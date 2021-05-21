@@ -24,8 +24,6 @@ import dan.ms.usuarios.services.interfaces.UsuarioService;
 @Service
 public class ClientServiceImp implements ClientService {
 
-
-
 	// -------------Repositories
 	@Autowired
 	ClienteRepository clienteRepo;
@@ -39,7 +37,7 @@ public class ClientServiceImp implements ClientService {
 
 	@Autowired
 	RiesgoBCRAService riesgoBcra;
-	
+
 	@Autowired
 	PedidoRestExternoService pedidoRestExternaService;
 
@@ -85,7 +83,6 @@ public class ClientServiceImp implements ClientService {
 
 		return Optional.of(clienteAGuardar);
 	}
-
 
 	@Override
 	public Optional<Cliente> buscarPorId(Integer id) {
@@ -145,20 +142,27 @@ public class ClientServiceImp implements ClientService {
 	 * 
 	 */
 	@Override
-	public void borrarCliente(Cliente cli) {
+	public Boolean borrarCliente(Cliente cli) {
 		Boolean tienePedidos = pedidoRestExternaService.tienePedidos(cli.getId());
-		if (tienePedidos) {
-			Date date = new Date(System.currentTimeMillis());
-			cli.setFechaBaja(date);
-			actualizarCliente(cli);
+		try {
+			if (tienePedidos) {
+				Date date = new Date(System.currentTimeMillis());
+				cli.setFechaBaja(date);
+				actualizarCliente(cli);
+				return true;
 
-		} else {
-			this.obraService.borrarObras(cli.getObras());
-			cli.setObras(null);
-			Usuario usuarioABorrar= cli.getUser();
-			this.clienteRepo.delete(cli);
-			this.usuarioService.borrarUsuario(usuarioABorrar);
-			cli = null;
+			} else {
+				this.obraService.borrarObras(cli.getObras());
+				cli.setObras(null);
+				Usuario usuarioABorrar = cli.getUser();
+				this.clienteRepo.delete(cli);
+				this.usuarioService.borrarUsuario(usuarioABorrar);
+				cli = null;
+				return true;
+			}
+		} 
+		catch (Exception e) {
+			return false;
 		}
 
 	}
