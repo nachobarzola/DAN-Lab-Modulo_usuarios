@@ -17,14 +17,14 @@ import dan.ms.usuarios.services.dao.ClienteRepository;
 import dan.ms.usuarios.services.dao.UsuarioRepository;
 import dan.ms.usuarios.services.interfaces.ClientService;
 import dan.ms.usuarios.services.interfaces.ObraService;
+import dan.ms.usuarios.services.interfaces.PedidoRestExternoService;
 import dan.ms.usuarios.services.interfaces.RiesgoBCRAService;
 import dan.ms.usuarios.services.interfaces.UsuarioService;
 
 @Service
 public class ClientServiceImp implements ClientService {
 
-	private static String API_REST_PEDIDO = "http://localhost:8080/api";
-	private static String ENDPOINT_PEDIDO = "/pedido";
+
 
 	// -------------Repositories
 	@Autowired
@@ -39,6 +39,9 @@ public class ClientServiceImp implements ClientService {
 
 	@Autowired
 	RiesgoBCRAService riesgoBcra;
+	
+	@Autowired
+	PedidoRestExternoService pedidoRestExternaService;
 
 	@Override
 	public Optional<Cliente> guardarCliente(Cliente clienteNuevo) {
@@ -143,25 +146,18 @@ public class ClientServiceImp implements ClientService {
 	 */
 	@Override
 	public void borrarCliente(Cliente cli) {
-
-		RestTemplate restUsuario = new RestTemplate();
-		String uri = API_REST_PEDIDO + ENDPOINT_PEDIDO;
-
-		uri = uri + "?idCliente=" + cli.getId();
-
-		ResponseEntity<Object[]> respuesta = restUsuario.exchange(uri, HttpMethod.GET, null, Object[].class);
-		Object[] pedidosRespuesta = respuesta.getBody();
-
-		Boolean tienePedidos = (pedidosRespuesta.length > 0);
-
+		Boolean tienePedidos = pedidoRestExternaService.tienePedidos(cli.getId());
 		if (tienePedidos) {
 			Date date = new Date(System.currentTimeMillis());
 			cli.setFechaBaja(date);
 			actualizarCliente(cli);
 
 		} else {
+			this.obraService.borrarObras(cli.getObras());
+			cli.setObras(null);
+			Usuario usuarioABorrar= cli.getUser();
 			this.clienteRepo.delete(cli);
-
+			this.usuarioService.borrarUsuario(usuarioABorrar);
 		}
 
 	}

@@ -5,5 +5,7 @@ import java.util.Optional;
 import dan.ms.usuarios.domain.Usuario;
 
 public interface UsuarioService {
-	Optional<Usuario> guardarUsuario(Usuario usuario);
+	public Optional<Usuario> guardarUsuario(Usuario usuario);
+	
+	public void borrarUsuario(Usuario usuario);
 }

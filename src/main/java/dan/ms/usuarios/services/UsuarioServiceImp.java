@@ -34,4 +34,9 @@ public class UsuarioServiceImp implements UsuarioService{
 		return Optional.empty();
 	}
 
+	@Override
+	public void borrarUsuario(Usuario usuario) {
+		usuarioRepo.delete(usuario);
+	}
+
 }

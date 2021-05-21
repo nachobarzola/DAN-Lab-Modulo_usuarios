@@ -77,6 +77,14 @@ public class ObraServiceImp implements ObraService{
 		return listaObraReturn;
 	}
 
+
+	@Override
+	public void borrarObras(List<Obra> listaObra) {
+		for(Obra unaObra: listaObra) {
+			obraRepo.delete(unaObra);
+		}
+	}
+
 	
 	
 }
