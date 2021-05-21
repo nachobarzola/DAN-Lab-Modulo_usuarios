@@ -25,16 +25,15 @@ public class ClientServiceImp implements ClientService {
 
 	private static String API_REST_PEDIDO = "http://localhost:8080/api";
 	private static String ENDPOINT_PEDIDO = "/pedido";
-	
 
-	//-------------Repositories
+	// -------------Repositories
 	@Autowired
 	ClienteRepository clienteRepo;
-	
-	//-------------SERVICES
+
+	// -------------SERVICES
 	@Autowired
 	ObraService obraService;
-	
+
 	@Autowired
 	UsuarioService usuarioService;
 
@@ -46,7 +45,7 @@ public class ClientServiceImp implements ClientService {
 		if (tieneRiesgoCrediticio(clienteNuevo)) {
 			return Optional.empty();
 		}
-		//Cliente que voy a guadar al final en la base de datos
+		// Cliente que voy a guadar al final en la base de datos
 		Cliente clienteAGuardar = new Cliente();
 		clienteAGuardar.setCuit(clienteNuevo.getCuit());
 		clienteAGuardar.setFechaBaja(clienteNuevo.getFechaBaja());
@@ -54,41 +53,36 @@ public class ClientServiceImp implements ClientService {
 		clienteAGuardar.setMail(clienteNuevo.getMail());
 		clienteAGuardar.setMaxCuentaCorriente(clienteNuevo.getMaxCuentaCorriente());
 		clienteAGuardar.setRazonSocial(clienteNuevo.getRazonSocial());
-		
-		//Guardamos el asuario del cliente
+
+		// Guardamos el asuario del cliente
 		Optional<Usuario> optUsuario = usuarioService.guardarUsuario(clienteNuevo.getUser());
-		if(optUsuario.isEmpty()) {
-			//No puedo guardar el usuario
+		if (optUsuario.isEmpty()) {
+			// No puedo guardar el usuario
 			return Optional.empty();
 		}
-		//Asignamos el usuario guardado al clienteAGuadar
+		// Asignamos el usuario guardado al clienteAGuadar
 		clienteAGuardar.setUser(optUsuario.get());
-		
-		//---------Obra es la dueña de la relacion, obra guarda la relacion con cliente
-		//Por lo tanto primero guardamos el cliente y despues las obras
+
+		// ---------Obra es la dueña de la relacion, obra guarda la relacion con cliente
+		// Por lo tanto primero guardamos el cliente y despues las obras
 		clienteAGuardar = clienteRepo.save(clienteAGuardar);
-		if(clienteAGuardar == null) {
-			//no pudo guardar el cliente
+		if (clienteAGuardar == null) {
+			// no pudo guardar el cliente
 			return Optional.empty();
 		}
-		//Guardamos las obras
+		// Guardamos las obras
 		List<Obra> listaObrasReturn = obraService.guardarObras(clienteNuevo.getObras());
-		if(listaObrasReturn == null) {
-			//no pudo guardar la lista de obras
+		if (listaObrasReturn == null) {
+			// no pudo guardar la lista de obras
 			return Optional.empty();
 		}
-		//Le asignamos las obras al clinteAGuardar para que quede consiste el modelo de objetos
+		// Le asignamos las obras al clinteAGuardar para que quede consiste el modelo de
+		// objetos
 		clienteAGuardar.setObras(listaObrasReturn);
-		
+
 		return Optional.of(clienteAGuardar);
 	}
-	@Override
-	public Optional<Cliente> guardarClienteSinObrasYUsuario(Cliente cli){
-		
-		return null;
-	}
-	
-	
+
 
 	@Override
 	public Optional<Cliente> buscarPorId(Integer id) {
@@ -113,7 +107,7 @@ public class ClientServiceImp implements ClientService {
 				return optCliente;
 			}
 		}
-		//TODO: retornar un opcional en todos
+		// TODO: retornar un opcional en todos
 		return Optional.empty();
 	}
 
@@ -126,9 +120,10 @@ public class ClientServiceImp implements ClientService {
 				return optCliente;
 			}
 		}
-		//TODO: retornar un opcional en todos
+		// TODO: retornar un opcional en todos
 		return Optional.empty();
 	}
+
 	private Boolean tieneRiesgoCrediticio(Cliente cli) {
 
 		if (riesgoBcra.estadoCrediticio(cli) != (1 | 2)) {
@@ -181,6 +176,5 @@ public class ClientServiceImp implements ClientService {
 
 		return cli.getFechaBaja() != null;
 	}
-
 
 }

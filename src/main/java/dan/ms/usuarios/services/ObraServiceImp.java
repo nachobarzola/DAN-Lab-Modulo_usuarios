@@ -46,24 +46,14 @@ public class ObraServiceImp implements ObraService{
 		//Le asignamos el objeto tipo obra a la clase obraAGuardar
 		obraAGuardar.setTipo(optTipoObra.get());
 		//----------------------------------------------------------------------
-		//Guardamos el cliente de la obra. 
+		//Asociamos el cliente de la obra. 
 		Cliente clienteAsociadoConObra = obra.getCliente();
-		//OJO!!: el cliente ya puede estar guardado, ese caso recuperamos el objeto!
+		//Recuperamos el cliente guardado 
 		Optional<Cliente> optClienteAsociadoConObra = clienteService.buscarPorCuit(clienteAsociadoConObra.getCuit());
 		if(optClienteAsociadoConObra.isPresent()) {
 			//El cliente ya existe, debemos solo asignarselo a la obra
 			obraAGuardar.setCliente(optClienteAsociadoConObra.get());
 		}
-		else {
-			//Guardamos el cliente
-			Optional<Cliente> optClienteReturn =clienteService.guardarClienteSinObrasYUsuario(clienteAsociadoConObra);
-			if(optClienteReturn.isEmpty()) {
-				//No se pudo guardar el cliente asociado
-				return Optional.empty();
-			}
-			obraAGuardar.setCliente(optClienteReturn.get());
-		}
-		
 		//----------------------------------------------------------------------
 		//Guardamos la obra
 		obraAGuardar = obraRepo.save(obraAGuardar);

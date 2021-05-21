@@ -9,7 +9,6 @@ public interface ClientService {
 
 	public Optional<Cliente> guardarCliente(Cliente cli);
 	
-	public Optional<Cliente> guardarClienteSinObrasYUsuario(Cliente cli);
 
 	public Optional<Cliente> buscarPorId(Integer id);
 	
