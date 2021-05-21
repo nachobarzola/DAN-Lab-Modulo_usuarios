@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -33,6 +33,7 @@ import dan.ms.usuarios.services.dao.UsuarioRepository;
 import dan.ms.usuarios.services.interfaces.ClientService;
 
 @SpringBootTest
+@Profile("testing")
 public class ClientServiceImpTest {
 	private String API_REST_PEDIDO = "http://localhost:8080/api/pedido";
 

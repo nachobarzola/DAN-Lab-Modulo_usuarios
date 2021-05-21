@@ -92,13 +92,7 @@ public class Obra {
 	public void setTipo(TipoObra tipo) {
 		this.tipo = tipo;
 	}
-	@Override
-	public String toString() {
-		return "Obra [id=" + id + ", descripcion=" + descripcion + ", latitud=" + latitud + ", longitud=" + longitud
-				+ ", direccion=" + direccion + ", superficie=" + superficie + ", cliente=" + cliente + ", tipo=" + tipo
-				+ "]";
-	}
-
+	
 	
 	
 	
