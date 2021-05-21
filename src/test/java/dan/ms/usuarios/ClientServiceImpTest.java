@@ -35,7 +35,6 @@ import dan.ms.usuarios.services.interfaces.ClientService;
 @SpringBootTest
 @Profile("testing")
 public class ClientServiceImpTest {
-	private String API_REST_PEDIDO = "http://localhost:8080/api/pedido";
 
 	@Autowired
 	private ClientService clientService;
@@ -181,7 +180,7 @@ public class ClientServiceImpTest {
 	// Test de intergracion con DB/repositorio
 	@Test
 	public void buscarCliente_DadoDeBaja() {
-		//Tipos requridos
+		// Tipos requridos
 		TipoObra tipoObra1 = new TipoObra(1, "REFORMA");
 		TipoObra tipoObra2 = new TipoObra(2, "CASA");
 		// -----Obra1
@@ -214,7 +213,7 @@ public class ClientServiceImpTest {
 		obras.get(0).setCliente(c1);
 		obras.get(1).setCliente(c1);
 		c1.setObras(obras);
-		
+
 		// Persisto el cliente
 		Optional<Cliente> optC1 = clientService.guardarCliente(c1);
 		c1 = optC1.get();
@@ -230,38 +229,62 @@ public class ClientServiceImpTest {
 		assertEquals(Optional.empty(), optC3);// No debe encontrarlo porque esta dado de baja
 	}
 
-	// TODO: NO SE COMO IMPLEMENTAR ESTE TEST: deberia de alguna forma mockear el microservicio pedido.
-	@Disabled
+	// TODO: NO SE COMO IMPLEMENTAR ESTE TEST: deberia de alguna forma mockear el
+	// microservicio pedido.
+	@Test
 	public void borrarCliente_sinPedidos() {
-		// Crear cliente
+		String API_REST_PEDIDO = "http://localhost:8080/api/pedido";
+		// Tipos necesarios
 		TipoUsuario tipoUsr = new TipoUsuario(1, "Cliente");
+		TipoObra tipoObra1 = new TipoObra(1, "REFORMA");
+		TipoObra tipoObra2 = new TipoObra(2, "CASA");
+		// -----Obra1
+		Obra o1 = new Obra();
+
+		o1.setDescripcion("Una obra chiquita");
+		o1.setDireccion("Bv Galvez");
+		o1.setLatitud(Float.valueOf(1225));
+		o1.setLongitud(Float.valueOf(1225));
+		o1.setSuperficie(100);
+		o1.setTipo(tipoObra1);
+		// --------------
+		// -----Obra2
+		Obra o2 = new Obra();
+		o2.setDescripcion("Una obra muy grande");
+		o2.setDireccion("Av San Juan");
+		o2.setLatitud(Float.valueOf(1225));
+		o2.setLongitud(Float.valueOf(1225));
+		o2.setSuperficie(9999999);
+		o2.setTipo(tipoObra2);
+
+		// ---------------------
+		List<Obra> obras = new ArrayList<>();
+		obras.add(o1);
+		obras.add(o2);
+		// -----------------------------
 		Usuario usr = new Usuario("HomeroJ", "siempreViva", tipoUsr);
-		Cliente c1 = new Cliente("Cliente01", "20395783698", "Homero@gmail.com", 50000, true, null, usr, null);// Cliente
-																												// dado
-																												// de
-																												// baja
-																												// porque
-																												// tiene
-																												// fecha
-																																																	// baja
+		Cliente c1 = new Cliente("Cliente01", "20395783698", "Homero@gmail.com", 50000, true, obras, usr, null);
+		// Setenmos la obra a su cliente
+		o1.setCliente(c1);
+		o2.setCliente(c1);
 
 		// Persisto el cliente
-		clientService.guardarCliente(c1);
+		c1 = clientService.guardarCliente(c1).get();
 
 		// Crear microservicio pedido falso.
 
-		RestTemplate cliRest = new RestTemplate();
+		RestTemplate pedidoRest = new RestTemplate();
 
-		MockRestServiceServer server = MockRestServiceServer.bindTo(cliRest).build();
+		MockRestServiceServer server = MockRestServiceServer.bindTo(pedidoRest).build();
 
 		server.expect(requestTo(API_REST_PEDIDO + "?idCliente=" + c1.getId())).andExpect(method(HttpMethod.GET))
-				.andRespond(withSuccess("", MediaType.APPLICATION_JSON));
+				.andRespond(withSuccess("[]", MediaType.APPLICATION_JSON));
 
 		// Borro cliente
 		clientService.borrarCliente(c1);
 		// Busco cliente
 		Optional<Cliente> clienteBorrado = clientService.buscarPorId(c1.getId());
-		assertEquals(Optional.empty(), clienteBorrado);
+		assertTrue(clienteBorrado.isEmpty());
 
 	}
 

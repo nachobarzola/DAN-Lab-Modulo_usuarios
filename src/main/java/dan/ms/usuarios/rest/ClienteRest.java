@@ -41,21 +41,12 @@ public class ClienteRest {
 	@GetMapping(path = "/{id}")
 	@ApiOperation(value = "Busca un cliente por id")
 	public ResponseEntity<Cliente> clientePorId(@PathVariable Integer id) {
-
-		// Optional<Cliente> c = listaClientesAntigua.stream().filter(unCli ->
-		// unCli.getId().equals(id)).findFirst();
-
 		return ResponseEntity.of(clientService.buscarPorId(id));
 	}
 
 	@GetMapping(path = "/obtenerCliente/{cuit}")
 	@ApiOperation(value = "Busca un cliente por el cuit")
 	public ResponseEntity<Cliente> clientePorCuit(@PathVariable String cuit) {
-		/*
-		 * Optional<Cliente> c = listaClientesAntigua.stream().filter(unCli ->
-		 * (unCli.getCuit().equals(cuit))) .findFirst(); return ResponseEntity.of(c);
-		 */
-
 		return ResponseEntity.of(clientService.buscarPorCuit(cuit));
 
 	}
@@ -63,11 +54,6 @@ public class ClienteRest {
 	@GetMapping(path = "/obtenerCliente")
 	@ApiOperation(value = "Busca un cliente por la razon social")
 	public ResponseEntity<Cliente> clientePorRazonSocial(@RequestParam(required = false) String razonSocial) {
-		/*
-		 * Optional<Cliente> c = listaClientesAntigua.stream().filter(unCli ->
-		 * unCli.getRazonSocial().equals(razonSocial)) .findFirst(); return
-		 * ResponseEntity.of(c);
-		 */
 		return ResponseEntity.of(clientService.buscarPorRazonSocial(razonSocial));
 
 	}
@@ -146,17 +132,9 @@ public class ClienteRest {
 	// clientes activos son aquellos que no tienen fechaBaja (o es null)
 	@DeleteMapping(path = "/{id}")
 	public ResponseEntity<Cliente> borrar(@PathVariable Integer id) {
-
 		this.clientService.borrarCliente(this.clientService.buscarPorId(id).get());
 		return ResponseEntity.ok().build();
-		/*
-		 * OptionalInt indexOpt = IntStream.range(0, listaClientesAntigua.size())
-		 * .filter(i -> listaClientesAntigua.get(i).getId().equals(id)).findFirst();
-		 * 
-		 * if (indexOpt.isPresent()) { listaClientesAntigua.remove(indexOpt.getAsInt());
-		 * return ResponseEntity.ok().build(); } else { return
-		 * ResponseEntity.notFound().build(); }
-		 */
+		
 	}
 
 }
