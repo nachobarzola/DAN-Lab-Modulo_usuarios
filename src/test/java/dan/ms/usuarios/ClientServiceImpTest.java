@@ -1,6 +1,7 @@
 package dan.ms.usuarios;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
@@ -62,7 +63,7 @@ public class ClientServiceImpTest {
 	}
 
 	// Test de integracion con DB/repositorio
-	@Disabled
+	@Test
 	public void guardarCliente() {
 		// Tipos necesarios
 		TipoUsuario tipoUsr = new TipoUsuario(1, "Cliente");
@@ -104,7 +105,7 @@ public class ClientServiceImpTest {
 	}
 
 	// Test de intergracion con DB/repositorio
-	@Disabled
+	@Test
 	public void buscarCliente() {
 		// Tipos necesarios
 		TipoUsuario tipoUsr1 = new TipoUsuario(1, "CLIENTE");
@@ -184,7 +185,7 @@ public class ClientServiceImpTest {
 	}
 
 	// Test de intergracion con DB/repositorio
-	@Disabled
+	@Test
 	public void buscarCliente_DadoDeBaja() {
 		// Tipos requridos
 		TipoObra tipoObra1 = new TipoObra(1, "REFORMA");
@@ -237,7 +238,55 @@ public class ClientServiceImpTest {
 
 	@Test
 	public void borrarCliente_sinPedidos() {
-		String API_REST_PEDIDO = "http://localhost:8080/api/pedido";
+		// Tipos necesarios
+		TipoUsuario tipoUsr = new TipoUsuario(1, "Cliente");
+		TipoObra tipoObra1 = new TipoObra(1, "REFORMA");
+		TipoObra tipoObra2 = new TipoObra(2, "CASA");
+		// -----Obra1
+		Obra o1 = new Obra();
+		o1.setDescripcion("Una obra chiquita");
+		o1.setDireccion("Bv Galvez");
+		o1.setLatitud(Float.valueOf(1225));
+		o1.setLongitud(Float.valueOf(1225));
+		o1.setSuperficie(100);
+		o1.setTipo(tipoObra1);
+		// --------------
+		// -----Obra2
+		Obra o2 = new Obra();
+		o2.setDescripcion("Una obra muy grande");
+		o2.setDireccion("Av San Juan");
+		o2.setLatitud(Float.valueOf(1225));
+		o2.setLongitud(Float.valueOf(1225));
+		o2.setSuperficie(9999999);
+		o2.setTipo(tipoObra2);
+
+		// ---------------------
+		List<Obra> obras = new ArrayList<>();
+		obras.add(o1);
+		obras.add(o2);
+		// -----------------------------
+		Usuario usr = new Usuario("HomeroJ", "siempreViva", tipoUsr);
+		Cliente c1 = new Cliente("Cliente01", "20395783698", "Homero@gmail.com", 50000, true, null, usr, null);
+		// Setenmos la obra a su cliente
+		o1.setCliente(c1);
+		o2.setCliente(c1);
+		c1.setObras(obras);
+
+		// Persisto el cliente
+		c1 = clientService.guardarCliente(c1).get();
+		
+		//No tiene pedidos
+		when(pedidoRestExternoService.tienePedidos(c1.getId())).thenReturn(false);
+		
+		// Borro cliente
+		clientService.borrarCliente(c1);
+		// Busco cliente
+		Optional<Cliente> clienteBorrado = clientService.buscarPorId(c1.getId());
+		assertTrue(clienteBorrado.isEmpty());
+
+	}
+	@Test
+	public void borrarCliente_ConPedidos() {
 		// Tipos necesarios
 		TipoUsuario tipoUsr = new TipoUsuario(1, "Cliente");
 		TipoObra tipoObra1 = new TipoObra(1, "REFORMA");
@@ -275,13 +324,19 @@ public class ClientServiceImpTest {
 		// Persisto el cliente
 		c1 = clientService.guardarCliente(c1).get();
 
-		when(pedidoRestExternoService.tienePedidos(c1.getId())).thenReturn(false);
+		//Tiene pedidos
+		when(pedidoRestExternoService.tienePedidos(c1.getId())).thenReturn(true);
 		
 		// Borro cliente
+		Integer idCliente = c1.getId();
 		clientService.borrarCliente(c1);
 		// Busco cliente
-		Optional<Cliente> clienteBorrado = clientService.buscarPorId(c1.getId());
-		assertTrue(clienteBorrado.isEmpty());
+		//Es importante buscarlo del repo directamente porque si usamos el service no lo encuentra por regla de negocio que especifica que un cliente dado de baja no se puede encontrar
+		Optional<Cliente> optClienteBorrado = clienteRepo.findById(idCliente);
+		//No se debe haber borrado y se le debe haber adjuntado fecha de baja
+		
+		assertTrue(optClienteBorrado.isPresent());
+		assertNotNull(optClienteBorrado.get().getFechaBaja());
 
 	}
 

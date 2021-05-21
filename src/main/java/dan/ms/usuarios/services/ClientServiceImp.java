@@ -158,14 +158,14 @@ public class ClientServiceImp implements ClientService {
 			Usuario usuarioABorrar= cli.getUser();
 			this.clienteRepo.delete(cli);
 			this.usuarioService.borrarUsuario(usuarioABorrar);
+			cli = null;
 		}
 
 	}
 
 	@Override
-	public Cliente actualizarCliente(Cliente cli) {
-		// TODO Falta implementar actualizar cliente
-		return null;
+	public Optional<Cliente> actualizarCliente(Cliente cli) {
+		return Optional.of(clienteRepo.save(cli));
 	}
 
 	private Boolean dadoDeBaja(Cliente cli) {

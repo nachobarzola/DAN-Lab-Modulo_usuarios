@@ -18,6 +18,6 @@ public interface ClientService {
 	
 	public void borrarCliente(Cliente cli);
 	
-	public Cliente actualizarCliente(Cliente cli);
+	public Optional<Cliente> actualizarCliente(Cliente cli);
 	
 }
