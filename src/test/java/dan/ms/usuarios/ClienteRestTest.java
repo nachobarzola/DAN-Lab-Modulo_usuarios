@@ -41,7 +41,7 @@ import dan.ms.usuarios.services.dao.ObraRepository;
 import dan.ms.usuarios.services.dao.UsuarioRepository;
 import dan.ms.usuarios.services.interfaces.ClientService;
 import dan.ms.usuarios.services.interfaces.PedidoRestExternoService;
-import springfox.documentation.spring.web.json.Json;
+
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @Profile("testing")
@@ -317,7 +317,7 @@ class ClienteRestTest {
 		assertTrue(respuesta.getStatusCode().equals(HttpStatus.BAD_REQUEST));
 
 	}
-
+	
 	@Test
 	void buscar_cliente_poIdRazonSocialCuit() {
 		// -------------------Creamos el cliente
@@ -354,7 +354,6 @@ class ClienteRestTest {
 		assertTrue(respuesta2.getStatusCode().equals(HttpStatus.OK));
 
 	}
-
 
 	@Test
 	void actualizar_cliente() {
@@ -399,6 +398,54 @@ class ClienteRestTest {
 		assertTrue(optClienteBuscado.isPresent());
 		assertEquals(c1.getMaxCuentaCorriente(), optClienteBuscado.get().getMaxCuentaCorriente());
 		assertEquals(c1.getMail(), optClienteBuscado.get().getMail());
+	}
+
+	@Test
+	void obtener_all_clientes() {
+		// Tipos necesarios
+		TipoUsuario tipoUsr = new TipoUsuario(1, "Cliente");
+		TipoObra tipoObra1 = new TipoObra(1, "REFORMA");
+		// -----Obra1
+		Obra o1 = new Obra();
+		o1.setDescripcion("Una obra chiquita");
+		o1.setDireccion("Bv Galvez");
+		o1.setLatitud(Float.valueOf(1225));
+		o1.setLongitud(Float.valueOf(1225));
+		o1.setSuperficie(100);
+		o1.setTipo(tipoObra1);
+		// ---------------------
+		List<Obra> obras = new ArrayList<>();
+		obras.add(o1);
+		// Cliente 1
+		Usuario usr = new Usuario("HomeroJ", "siempreViva", tipoUsr);
+		Cliente c1 = new Cliente("Cliente01", "20395783698", "Homero@gmail.com", 50000, true, null, usr, null);
+		// Setenmos la obra a su cliente
+		o1.setCliente(c1);
+		c1.setObras(obras);
+		//
+		c1 = clienteService.guardarCliente(c1).get();
+		// Cliente 2
+		Usuario usr2 = new Usuario("HomeroJ", "siempreViva", tipoUsr);
+		Cliente c2 = new Cliente("Cliente01", "20395783698", "Homero@gmail.com", 50000, true, null, usr2, null);
+		// Setenmos la obra a su cliente
+		o1.setCliente(c2);
+		c2.setObras(obras);
+		//
+		c2 = clienteService.guardarCliente(c2).get();
+		// Cliente 3
+		Usuario usr3 = new Usuario("HomeroJ", "siempreViva", tipoUsr);
+		Cliente c3 = new Cliente("Cliente01", "20395783698", "Homero@gmail.com", 50000, true, null, usr3, null);
+		// Setenmos la obra a su cliente
+		o1.setCliente(c3);
+		c3.setObras(obras);
+		//
+		c3 = clienteService.guardarCliente(c3).get();
+
+		// -------------------------------------------------
+		String server = "http://localhost:" + puerto + ENDPOINT_CLIENTE;
+		ResponseEntity<Cliente[]> respuesta = testRestTemplate.getForEntity(server, Cliente[].class);
+		assertTrue(respuesta.getStatusCode().equals(HttpStatus.OK));
+		assertTrue(respuesta.getBody().length == 3);
 	}
 
 	@Test
