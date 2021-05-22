@@ -86,42 +86,53 @@ public class ClientServiceImp implements ClientService {
 
 	@Override
 	public Optional<Cliente> buscarPorId(Integer id) {
-
-		Optional<Cliente> optcl = this.clienteRepo.findById(id);
-
-		if (optcl.isPresent()) {
-			if (!dadoDeBaja(optcl.get())) {
-				return optcl;
+		try {
+			Optional<Cliente> optcl = this.clienteRepo.findById(id);
+			if (optcl.isPresent()) {
+				if (!dadoDeBaja(optcl.get())) {
+					return optcl;
+				}
 			}
+			return Optional.empty();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Optional.empty();
 		}
-		return Optional.empty();
+	
 
 	}
 
 	@Override
 	public Optional<Cliente> buscarPorCuit(String cuit) {
-		Optional<Cliente> optCliente = Optional.of(this.clienteRepo.findByCuit(cuit));
-
-		if (optCliente.isPresent()) {
-			if (!dadoDeBaja(optCliente.get())) {
-				return optCliente;
+		try {
+			Optional<Cliente> optCliente = Optional.of(this.clienteRepo.findByCuit(cuit));
+			if (optCliente.isPresent()) {
+				if (!dadoDeBaja(optCliente.get())) {
+					return optCliente;
+				}
 			}
+			return Optional.empty();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Optional.empty();
 		}
-		// TODO: retornar un opcional en todos
-		return Optional.empty();
 	}
 
 	@Override
 	public Optional<Cliente> buscarPorRazonSocial(String razonSocial) {
-		Optional<Cliente> optCliente = Optional.of(clienteRepo.findByRazonSocial(razonSocial));
-
-		if (optCliente.isPresent()) {
-			if (!dadoDeBaja(optCliente.get())) {
-				return optCliente;
+		try {
+			Optional<Cliente> optCliente = Optional.of(clienteRepo.findByRazonSocial(razonSocial));
+			if (optCliente.isPresent()) {
+				if (!dadoDeBaja(optCliente.get())) {
+					return optCliente;
+				}
 			}
+			return Optional.empty();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Optional.empty();
 		}
-		// TODO: retornar un opcional en todos
-		return Optional.empty();
+
 	}
 
 	private Boolean tieneRiesgoCrediticio(Cliente cli) {
@@ -160,8 +171,7 @@ public class ClientServiceImp implements ClientService {
 				cli = null;
 				return true;
 			}
-		} 
-		catch (Exception e) {
+		} catch (Exception e) {
 			return false;
 		}
 
@@ -175,6 +185,11 @@ public class ClientServiceImp implements ClientService {
 	private Boolean dadoDeBaja(Cliente cli) {
 
 		return cli.getFechaBaja() != null;
+	}
+
+	@Override
+	public List<Cliente> getAllCliente() {
+		return clienteRepo.findAll();
 	}
 
 }

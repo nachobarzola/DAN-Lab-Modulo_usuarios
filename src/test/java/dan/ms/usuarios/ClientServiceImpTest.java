@@ -183,6 +183,21 @@ public class ClientServiceImpTest {
 		assertTrue(optCReturn3.isPresent());
 
 	}
+	@Test
+	public void buscarCliente_noExistente() {
+		//Busqueda por cuit
+		Optional<Cliente> optClienteBuscado = clientService.buscarPorCuit("202540000");
+		assertTrue(optClienteBuscado.isEmpty());
+		
+		//Busqueda por id
+		Optional<Cliente> optClienteBuscado2 = clientService.buscarPorId(20);
+		assertTrue(optClienteBuscado2.isEmpty());
+		
+		//Busqueda por razonSocial
+		Optional<Cliente> optClienteBuscado3 = clientService.buscarPorRazonSocial("Cliente606");
+		assertTrue(optClienteBuscado3.isEmpty());
+		
+	}
 
 	// Test de intergracion con DB/repositorio
 	@Test

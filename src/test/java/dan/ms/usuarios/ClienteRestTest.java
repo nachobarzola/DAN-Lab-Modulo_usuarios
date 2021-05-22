@@ -1,5 +1,6 @@
 package dan.ms.usuarios;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -354,6 +355,72 @@ class ClienteRestTest {
 
 	}
 
+
+	@Test
+	void actualizar_cliente() {
+		// Tipos necesarios
+		TipoUsuario tipoUsr = new TipoUsuario(1, "Cliente");
+		TipoObra tipoObra1 = new TipoObra(1, "REFORMA");
+		TipoObra tipoObra2 = new TipoObra(2, "CASA");
+		// -----Obra1
+		Obra o1 = new Obra();
+		o1.setDescripcion("Una obra chiquita");
+		o1.setDireccion("Bv Galvez");
+		o1.setLatitud(Float.valueOf(1225));
+		o1.setLongitud(Float.valueOf(1225));
+		o1.setSuperficie(100);
+		o1.setTipo(tipoObra1);
+		// ---------------------
+		List<Obra> obras = new ArrayList<>();
+		obras.add(o1);
+		//
+		Usuario usr = new Usuario("HomeroJ", "siempreViva", tipoUsr);
+		Cliente c1 = new Cliente("Cliente01", "20395783698", "Homero@gmail.com", 50000, true, null, usr, null);
+		// Setenmos la obra a su cliente
+		o1.setCliente(c1);
+		c1.setObras(obras);
+		// Persisto el cliente usando el service que me resuelve la complejidad de
+		// guardar las obras y los usuarios
+		c1 = clienteService.guardarCliente(c1).get();
+		// -------------------------------------------------
+		// Ahora lo actualizo, algunos campos
+		c1.setMaxCuentaCorriente(90999);
+		c1.setMail("HomeroJSimpsons@hotmail.com");
+		//
+		String server = "http://localhost:" + puerto + ENDPOINT_CLIENTE + "/" + c1.getId();
+		HttpEntity<Cliente> requestCliente = new HttpEntity<>(c1);
+		ResponseEntity<Cliente> respuesta = testRestTemplate.exchange(server, HttpMethod.PUT, requestCliente,
+				Cliente.class);
+		// Verificamos que responda ok
+		assertTrue(respuesta.getStatusCode().equals(HttpStatus.OK));
+
+		// Chequeamos el cambio en el repositorio
+		Optional<Cliente> optClienteBuscado = clienteRepo.findById(c1.getId());
+		assertTrue(optClienteBuscado.isPresent());
+		assertEquals(c1.getMaxCuentaCorriente(), optClienteBuscado.get().getMaxCuentaCorriente());
+		assertEquals(c1.getMail(), optClienteBuscado.get().getMail());
+	}
+
+	@Test
+	void actualizar_clienteNoExistente_RespuestaNotFound() {
+		Cliente c1 = new Cliente();
+		c1.setId(15893);
+		c1.setCuit("2036644150");
+		c1.setMaxCuentaCorriente(90999);
+		c1.setMail("HomeroJSimpsons@hotmail.com");
+		//
+		String server = "http://localhost:" + puerto + ENDPOINT_CLIENTE + "/" + c1.getId();
+		HttpEntity<Cliente> requestCliente = new HttpEntity<>(c1);
+		ResponseEntity<Cliente> respuesta = testRestTemplate.exchange(server, HttpMethod.PUT, requestCliente,
+				Cliente.class);
+		// Verificamos que responda not found
+		assertTrue(respuesta.getStatusCode().equals(HttpStatus.NOT_FOUND));
+
+		// Chequeamos el cambio en el repositorio
+		Optional<Cliente> optClienteBuscado = clienteRepo.findById(c1.getId());
+		assertTrue(optClienteBuscado.isEmpty());
+	}
+
 	@Test
 	void borrar_cliente_sinPedidos() {
 		// Tipos necesarios
@@ -389,7 +456,8 @@ class ClienteRestTest {
 		o2.setCliente(c1);
 		c1.setObras(obras);
 
-		// Persisto el cliente usando el service que me resuelve la complejidad de guardar las obras y los usuarios
+		// Persisto el cliente usando el service que me resuelve la complejidad de
+		// guardar las obras y los usuarios
 		c1 = clienteService.guardarCliente(c1).get();
 
 		// No tiene pedidos
@@ -407,6 +475,7 @@ class ClienteRestTest {
 		assertTrue(clienteBorrado.isEmpty());
 
 	}
+
 	@Test
 	void borrar_cliente_conPedidos() {
 		// Tipos necesarios
@@ -442,10 +511,11 @@ class ClienteRestTest {
 		o2.setCliente(c1);
 		c1.setObras(obras);
 
-		// Persisto el cliente usando el service que me resuelve la complejidad de guardar las obras y los usuarios
+		// Persisto el cliente usando el service que me resuelve la complejidad de
+		// guardar las obras y los usuarios
 		c1 = clienteService.guardarCliente(c1).get();
 
-		//Tiene pedidos
+		// Tiene pedidos
 		when(pedidoRestExternoService.tienePedidos(c1.getId())).thenReturn(true);
 		//
 		String serverConId = "http://localhost:" + puerto + ENDPOINT_CLIENTE + "/" + c1.getId();
@@ -461,10 +531,11 @@ class ClienteRestTest {
 		assertNotNull(optClienteBorrado.get().getFechaBaja());
 
 	}
+
 	@Test
 	void borrar_cliente_NoExiste_respuesta_BadRequest() {
 		Integer idClientePrueba = 234;
-		//Tiene pedidos
+		// Tiene pedidos
 		when(pedidoRestExternoService.tienePedidos(idClientePrueba)).thenReturn(true);
 		//
 		String serverConId = "http://localhost:" + puerto + ENDPOINT_CLIENTE + "/" + idClientePrueba;
@@ -477,7 +548,6 @@ class ClienteRestTest {
 		// Busco cliente
 		Optional<Cliente> optClienteBorrado = clienteRepo.findById(idClientePrueba);
 		assertTrue(optClienteBorrado.isEmpty());
-
 
 	}
 

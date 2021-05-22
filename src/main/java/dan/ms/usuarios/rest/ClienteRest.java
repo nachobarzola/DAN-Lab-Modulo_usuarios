@@ -59,8 +59,9 @@ public class ClienteRest {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<Cliente>> todos() {
-		return ResponseEntity.ok(listaClientesAntigua);
+	@ApiOperation(value = "Se obtienen todos los clientes")
+	public ResponseEntity<List<Cliente>> getAllCliente() {
+		return ResponseEntity.ok(clientService.getAllCliente());
 	}
 
 	@PostMapping
@@ -110,18 +111,19 @@ public class ClienteRest {
 	}
 
 	@PutMapping(path = "/{id}")
-	@ApiOperation(value = "Actualiza un cliente")
+	@ApiOperation(value = "Actualiza el cliente. El cliente no debe estar dado de baja.Para actualizar usa el cuit")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Actualizado correctamente"),
-			@ApiResponse(code = 401, message = "No autorizado"), @ApiResponse(code = 403, message = "Prohibido"),
-			@ApiResponse(code = 404, message = "El ID no existe") })
+			@ApiResponse(code = 401, message = "No autorizado"), 
+			@ApiResponse(code = 403, message = "Prohibido"),
+			@ApiResponse(code = 404, message = "El cliente no existe") })
 	public ResponseEntity<Cliente> actualizar(@RequestBody Cliente nuevo, @PathVariable Integer id) {
-		OptionalInt indexOpt = IntStream.range(0, listaClientesAntigua.size())
-				.filter(i -> listaClientesAntigua.get(i).getId().equals(id)).findFirst();
-
-		if (indexOpt.isPresent()) {
-			listaClientesAntigua.set(indexOpt.getAsInt(), nuevo);
-			return ResponseEntity.ok(nuevo);
-		} else {
+		Optional<Cliente> optClienteBuscado = clientService.buscarPorCuit(nuevo.getCuit());
+		if (optClienteBuscado.isPresent()) {
+			nuevo.setId(optClienteBuscado.get().getId());
+			return ResponseEntity.of(clientService.actualizarCliente(nuevo));
+		} 
+		else {
+			//El cliente no existe
 			return ResponseEntity.notFound().build();
 		}
 	}

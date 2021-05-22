@@ -1,6 +1,7 @@
 package dan.ms.usuarios.services.interfaces;
 
 import java.util.Optional;
+import java.util.List;
 
 import dan.ms.usuarios.domain.Cliente;
 
@@ -19,5 +20,7 @@ public interface ClientService {
 	public Boolean borrarCliente(Cliente cli);
 	
 	public Optional<Cliente> actualizarCliente(Cliente cli);
+	
+	public List<Cliente> getAllCliente();
 	
 }
