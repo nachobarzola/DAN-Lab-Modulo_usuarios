@@ -22,9 +22,7 @@ public class UsuarioServiceImp implements UsuarioService{
 	
 	@Override
 	public Optional<Usuario> guardarUsuario(Usuario usuario) {
-		//TODO: No funca esta busqueda porque en ningun momento se cargan esos valores preestablecidos
 		Optional<TipoUsuario> optTipoU = tipoUsuarioRepo.findById(usuario.getTipoUsuario().getId());
-		System.out.println("[debug-UsuarioServiceImp-Mtdo: guardarUsuario]El tipo de usuario retornado dio null: "+optTipoU.isEmpty());
 		if(optTipoU.isPresent()) {
 			//Se encontro el tipo usuario
 			usuario.setTipoUsuario(optTipoU.get());
@@ -37,6 +35,19 @@ public class UsuarioServiceImp implements UsuarioService{
 	@Override
 	public void borrarUsuario(Usuario usuario) {
 		usuarioRepo.delete(usuario);
+	}
+
+	@Override
+	public Optional<Usuario> actualizarUsuario(Usuario usuario) {
+		//Debe existir el usuario
+		Optional<Usuario> optUsuarioBuscado = usuarioRepo.findById(usuario.getId());
+		if(optUsuarioBuscado.isPresent()) {
+			optUsuarioBuscado.get().setPassword(usuario.getPassword());
+			optUsuarioBuscado.get().setUser(usuario.getUser());
+			optUsuarioBuscado.get().setTipoUsuario(usuario.getTipoUsuario());
+			return this.guardarUsuario(optUsuarioBuscado.get());
+		}
+		return Optional.empty();
 	}
 
 }

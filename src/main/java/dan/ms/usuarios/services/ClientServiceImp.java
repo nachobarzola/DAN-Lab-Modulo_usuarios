@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import dan.ms.usuarios.domain.Cliente;
 import dan.ms.usuarios.domain.Obra;
+import dan.ms.usuarios.domain.TipoUsuario;
 import dan.ms.usuarios.domain.Usuario;
 import dan.ms.usuarios.services.dao.ClienteRepository;
 import dan.ms.usuarios.services.dao.UsuarioRepository;
@@ -55,8 +56,14 @@ public class ClientServiceImp implements ClientService {
 		clienteAGuardar.setMaxCuentaCorriente(clienteNuevo.getMaxCuentaCorriente());
 		clienteAGuardar.setRazonSocial(clienteNuevo.getRazonSocial());
 
+		//Usuario
+		Usuario usuario = new Usuario();
+		usuario.setUser(clienteAGuardar.getMail());
+		usuario.setPassword("1234");
+		usuario.setTipoUsuario(new TipoUsuario(1,"CLIENTE"));
+		
 		// Guardamos el asuario del cliente
-		Optional<Usuario> optUsuario = usuarioService.guardarUsuario(clienteNuevo.getUser());
+		Optional<Usuario> optUsuario = usuarioService.guardarUsuario(usuario);
 		if (optUsuario.isEmpty()) {
 			// No puedo guardar el usuario
 			return Optional.empty();
@@ -179,7 +186,14 @@ public class ClientServiceImp implements ClientService {
 
 	@Override
 	public Optional<Cliente> actualizarCliente(Cliente cli) {
-		return Optional.of(clienteRepo.save(cli));
+		//Buscamos el cliente
+		Optional<Cliente> optClienteBuscado = clienteRepo.findById(cli.getId());
+		if(optClienteBuscado.isPresent()) {
+			cli.setObras(optClienteBuscado.get().getObras());
+			cli.setUser(optClienteBuscado.get().getUser());
+			return Optional.of(clienteRepo.save(cli)); 
+		}
+		return Optional.empty();
 	}
 
 	private Boolean dadoDeBaja(Cliente cli) {

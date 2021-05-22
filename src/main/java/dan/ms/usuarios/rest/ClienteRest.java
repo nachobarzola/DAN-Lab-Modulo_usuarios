@@ -22,6 +22,7 @@ import dan.ms.usuarios.domain.Cliente;
 import dan.ms.usuarios.domain.Obra;
 import dan.ms.usuarios.domain.Usuario;
 import dan.ms.usuarios.services.interfaces.ClientService;
+import dan.ms.usuarios.services.interfaces.UsuarioService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -34,6 +35,9 @@ public class ClienteRest {
 
 	@Autowired
 	private ClientService clientService;
+	
+	@Autowired
+	UsuarioService usuarioService;
 
 	private static final List<Cliente> listaClientesAntigua = new ArrayList<>();
 	private static Integer ID_GEN = 1;
@@ -68,7 +72,6 @@ public class ClienteRest {
 	public ResponseEntity<Cliente> crear(@RequestBody Cliente nuevoC) {
 		// • Cuando se da de alta un Cliente, se debe indicar al menos una Obra con su
 		// Tipo de Obra
-		// y la información de usuario y clave para crear el usuario.
 		ResponseEntity<Cliente> respEntBadRequest = ResponseEntity.badRequest().build();
 		// Validamos que el cliente exista
 		if (nuevoC == null) {
@@ -80,27 +83,12 @@ public class ClienteRest {
 			return respEntBadRequest;
 		}
 		Boolean ObrasConSutipo = obras.stream().allMatch(unaObra -> (unaObra.getTipo() != null));
-		Usuario user = nuevoC.getUser();
-		// Validamos que tenga usuario
-		if (user == null) {
-			return respEntBadRequest;
-		}
-		// Validamos que tenga nombre de usuario
-		Boolean existeNombreUser = user.getUser() != null;
-		if (!existeNombreUser) {
-			return respEntBadRequest;
-		}
-		Boolean existePassword = user.getPassword() != null && !user.getPassword().isBlank();
-		Boolean existeTipoUser = user.getTipoUsuario() != null;
-
-		if (ObrasConSutipo && existeNombreUser && existePassword && existeTipoUser) {
+		
+		if (ObrasConSutipo) {
 			// El cliente pose una o mas obras con su tipo (obligatorio)
-			// El cliente posee un usuario con toda su informacion (user,password,tipo)
-			nuevoC.setId(ID_GEN++);
 
 			Optional<Cliente> optClienteReturn = clientService.guardarCliente(nuevoC);
-			System.out.println(
-					"[Debug-ClienteRest-Mtdo: crear] El cliente retornado es nulo: " + optClienteReturn.isEmpty());
+	
 			if (optClienteReturn.isPresent()) {
 				return ResponseEntity.ok(optClienteReturn.get());
 			}
@@ -110,17 +98,35 @@ public class ClienteRest {
 
 	}
 
-	@PutMapping(path = "/{id}")
+	@PutMapping(path="/{cuit}")
 	@ApiOperation(value = "Actualiza el cliente. El cliente no debe estar dado de baja.Para actualizar usa el cuit")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Actualizado correctamente"),
 			@ApiResponse(code = 401, message = "No autorizado"), 
 			@ApiResponse(code = 403, message = "Prohibido"),
 			@ApiResponse(code = 404, message = "El cliente no existe") })
-	public ResponseEntity<Cliente> actualizar(@RequestBody Cliente nuevo, @PathVariable Integer id) {
-		Optional<Cliente> optClienteBuscado = clientService.buscarPorCuit(nuevo.getCuit());
+	public ResponseEntity<Cliente> actualizar(@RequestBody Cliente nuevo,@PathVariable String cuit) {
+		Optional<Cliente> optClienteBuscado = clientService.buscarPorCuit(cuit);
 		if (optClienteBuscado.isPresent()) {
 			nuevo.setId(optClienteBuscado.get().getId());
 			return ResponseEntity.of(clientService.actualizarCliente(nuevo));
+		} 
+		else {
+			//El cliente no existe
+			return ResponseEntity.notFound().build();
+		}
+	}
+	@PutMapping(path="/{cuit}/usuario")
+	@ApiOperation(value = "Actualiza el usuario de un cliente. Para actualizar usa el cuit del cliente")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Actualizado correctamente"),
+			@ApiResponse(code = 401, message = "No autorizado"), 
+			@ApiResponse(code = 403, message = "Prohibido"),
+			@ApiResponse(code = 404, message = "El cliente no existe") })
+	public ResponseEntity<Usuario> actualizarUsuario(@RequestBody Usuario nuevoUsuario,@PathVariable String cuit) {
+		Optional<Cliente> optClienteBuscado = clientService.buscarPorCuit(cuit);
+		if (optClienteBuscado.isPresent()) {
+			System.out.println("El usuario del cliente es: "+optClienteBuscado.get().getUser());
+			nuevoUsuario.setId(optClienteBuscado.get().getUser().getId());
+			return ResponseEntity.of(usuarioService.actualizarUsuario(nuevoUsuario));
 		} 
 		else {
 			//El cliente no existe
