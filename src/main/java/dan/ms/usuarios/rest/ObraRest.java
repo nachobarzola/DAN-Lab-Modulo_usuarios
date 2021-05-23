@@ -113,9 +113,7 @@ public class ObraRest {
 			respuesta2.addAll(obraService.buscarObraPorTipoObra(tipoObra));
 		}
 		if(cuitCliente != null) {
-			//respuesta3 = filtrarListaPorCuitCliente(cuitCliente);
 			respuesta3.addAll(obraService.buscarObraPorCuitCliente(cuitCliente));
-			//System.out.print("Respuesta3:"+respuesta3.size()+"\n");
 		}
 		respuesta2.addAll(respuesta3);
 		respuesta1.addAll(respuesta2);
@@ -123,7 +121,6 @@ public class ObraRest {
 		//Este caso se puede dar si se usan mutiples parametros y comparten los mismo valores
 		List<Obra> respuestaFinal= respuesta1.stream()
 				.distinct().collect(Collectors.toList());
-		//System.out.print("RespuestaFinal:"+respuestaFinal.size()+"\n");
 		return ResponseEntity.ok(respuestaFinal);
 	}
 	
