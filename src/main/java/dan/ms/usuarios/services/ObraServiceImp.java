@@ -113,4 +113,21 @@ public class ObraServiceImp implements ObraService {
 		return Optional.empty();
 	}
 
+	@Override
+	public Optional<Obra> crearObraYAsignarselaAlCliente(Obra obra) {
+		//Busco el cliente
+		Optional<Cliente> optClienteBuscado = clienteService.buscarPorCuit(obra.getCliente().getCuit());
+		if(optClienteBuscado.isEmpty()) {
+			//El cliente no existe
+			return Optional.empty();
+		}
+		obra.setCliente(optClienteBuscado.get());
+		Optional<Obra> optObraGuardada = this.guardarObra(obra);
+		if(optObraGuardada.isEmpty()) {
+			//La obra no se pudo guardar
+			return Optional.empty();
+		}
+		return optObraGuardada;
+	}
+
 }

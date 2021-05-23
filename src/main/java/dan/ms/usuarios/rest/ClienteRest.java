@@ -91,7 +91,7 @@ public class ClienteRest {
 		}
 		List<Obra> obras = nuevoC.getObras();
 		// Validamos que tenga obras
-		if (obras == null) {
+		if (obras == null || obras.size() == 0) {
 			return respEntBadRequest;
 		}
 		Boolean ObrasConSutipo = obras.stream().allMatch(unaObra -> (unaObra.getTipo() != null));

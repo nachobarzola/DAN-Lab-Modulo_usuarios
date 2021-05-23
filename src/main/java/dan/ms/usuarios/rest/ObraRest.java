@@ -2,6 +2,7 @@ package dan.ms.usuarios.rest;
 
 import dan.ms.usuarios.domain.Obra;
 import dan.ms.usuarios.domain.TipoObra;
+import dan.ms.usuarios.services.interfaces.ObraService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -14,6 +15,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,13 +33,22 @@ public class ObraRest {
 	private static final List<Obra> listaObra= new ArrayList<>();
 	private static Integer ID_GEN = 1;
 	
+	@Autowired
+	ObraService obraService;
+	
 	@PostMapping
-	@ApiOperation(value="Crear una obra")
-	public ResponseEntity<Obra> crear(@RequestBody Obra obraNueva){
-		System.out.print("Se creo nueva obra: "+ obraNueva.toString()+"\n");
-		obraNueva.setId(ID_GEN++);
-		listaObra.add(obraNueva);
-		return ResponseEntity.ok(obraNueva);
+	@ApiOperation(value="Crear una obra y se la asigna al cliente. El clinte tiene que estar en el json y contener un cuit")
+	@ApiResponses(value= {
+			@ApiResponse(code=200, message="Obra guardada y asignada a cliente"),
+			@ApiResponse(code=400,message = "La obra no tiene cliente o el cliente no tiene cuit"),
+			@ApiResponse(code=404,message = "Ocurrio un error al guardar la obra")
+	})
+	public ResponseEntity<Obra> crearObraYAsignarselaAlCliente(@RequestBody Obra obraNueva){
+		if(obraNueva.getCliente() == null 
+				&& (obraNueva.getCliente().getCuit() == null || obraNueva.getCliente().getCuit().isBlank())) {
+			return ResponseEntity.badRequest().build();
+		}
+		return ResponseEntity.of(obraService.crearObraYAsignarselaAlCliente(obraNueva));
 	}
 	
 	@PutMapping(path= "/{id}")

@@ -15,4 +15,6 @@ public interface ObraService {
 	public Optional<Obra> buscarObra(Integer idObra);
 	
 	public Optional<Obra> buscarObra(Obra obra);
+	
+	public Optional<Obra> crearObraYAsignarselaAlCliente(Obra obra);
 }
