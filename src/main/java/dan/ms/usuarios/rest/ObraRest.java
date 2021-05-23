@@ -122,26 +122,5 @@ public class ObraRest {
 	}
 	
 	
-	//METODOS AUXILIARES 
-	//no pertenecen a la API REST
-	private List<Obra> filtrarListaPorIdCliente(Integer id_cliente){
-		List<Obra> listaFiltrada= new ArrayList<>();
-		listaFiltrada = listaObra.stream()
-				.filter(unaObra -> unaObra.getCliente().getId().equals(id_cliente)).collect(Collectors.toList());
-		return listaFiltrada;
-	}
-	private List<Obra> filtrarListaPorTipoObra(Integer tipoObra){
-		List<Obra> listaFiltrada= new ArrayList<>();
-		listaFiltrada = listaObra.stream()
-				.filter(unaObra -> unaObra.getTipo().getId().equals(tipoObra)).collect(Collectors.toList());
-		return listaFiltrada;
-	}
-	private List<Obra> filtrarListaPorCuitCliente(String cuitCliente){
-		List<Obra> listaFiltrada= new ArrayList<>();
-		listaFiltrada = listaObra.stream()
-				.filter(unaObra -> unaObra.getCliente().getCuit().equals(cuitCliente)).collect(Collectors.toList());
-		return listaFiltrada;
-	}
-	
 	
 }
