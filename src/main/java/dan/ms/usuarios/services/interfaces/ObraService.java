@@ -11,4 +11,8 @@ public interface ObraService {
 	public List<Obra> guardarObras(List<Obra> obra);
 	
 	public void borrarObras(List<Obra> listaObra);
+	
+	public Optional<Obra> buscarObra(Integer idObra);
+	
+	public Optional<Obra> buscarObra(Obra obra);
 }

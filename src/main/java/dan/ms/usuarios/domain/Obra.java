@@ -92,9 +92,5 @@ public class Obra {
 	public void setTipo(TipoObra tipo) {
 		this.tipo = tipo;
 	}
-	
-	
-	
-	
-	
+
 }

@@ -56,12 +56,12 @@ public class ClientServiceImp implements ClientService {
 		clienteAGuardar.setMaxCuentaCorriente(clienteNuevo.getMaxCuentaCorriente());
 		clienteAGuardar.setRazonSocial(clienteNuevo.getRazonSocial());
 
-		//Usuario
+		// Usuario
 		Usuario usuario = new Usuario();
 		usuario.setUser(clienteAGuardar.getMail());
 		usuario.setPassword("1234");
-		usuario.setTipoUsuario(new TipoUsuario(1,"CLIENTE"));
-		
+		usuario.setTipoUsuario(new TipoUsuario(1, "CLIENTE"));
+
 		// Guardamos el asuario del cliente
 		Optional<Usuario> optUsuario = usuarioService.guardarUsuario(usuario);
 		if (optUsuario.isEmpty()) {
@@ -105,7 +105,6 @@ public class ClientServiceImp implements ClientService {
 			e.printStackTrace();
 			return Optional.empty();
 		}
-	
 
 	}
 
@@ -186,12 +185,12 @@ public class ClientServiceImp implements ClientService {
 
 	@Override
 	public Optional<Cliente> actualizarCliente(Cliente cli) {
-		//Buscamos el cliente
+		// Buscamos el cliente
 		Optional<Cliente> optClienteBuscado = clienteRepo.findById(cli.getId());
-		if(optClienteBuscado.isPresent()) {
+		if (optClienteBuscado.isPresent()) {
 			cli.setObras(optClienteBuscado.get().getObras());
 			cli.setUser(optClienteBuscado.get().getUser());
-			return Optional.of(clienteRepo.save(cli)); 
+			return Optional.of(clienteRepo.save(cli));
 		}
 		return Optional.empty();
 	}
@@ -204,6 +203,25 @@ public class ClientServiceImp implements ClientService {
 	@Override
 	public List<Cliente> getAllCliente() {
 		return clienteRepo.findAll();
+	}
+
+	@Override
+	public Optional<Cliente> buscarPorIdObra(Integer idObra) {
+		Optional<Obra> optObraBuscada = obraService.buscarObra(idObra);
+		if (optObraBuscada.isPresent()) {
+			return Optional.of(optObraBuscada.get().getCliente());
+		}
+
+		return Optional.empty();
+	}
+
+	@Override
+	public Optional<Cliente> buscarPorObra(Obra obra) {
+		Optional<Obra> optObraBuscada = obraService.buscarObra(obra);
+		if(optObraBuscada.isPresent()) {
+			return Optional.of(optObraBuscada.get().getCliente());
+		}
+		return Optional.empty();
 	}
 
 }

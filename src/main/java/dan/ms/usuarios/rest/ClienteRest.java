@@ -61,6 +61,18 @@ public class ClienteRest {
 		return ResponseEntity.of(clientService.buscarPorRazonSocial(razonSocial));
 
 	}
+	@GetMapping(path = "/obtenerCliente/obra/{idObra}")
+	@ApiOperation(value = "Busca un cliente por el id de una obra")
+	public ResponseEntity<Cliente> clientePorIdObra(@PathVariable Integer idObra) {
+		return ResponseEntity.of(clientService.buscarPorIdObra(idObra));
+
+	}
+	@GetMapping(path = "/obtenerCliente/obra")
+	@ApiOperation(value = "Busca un cliente por el id de una obra")
+	public ResponseEntity<Cliente> clientePorObra(@RequestBody Obra obra) {
+		return ResponseEntity.of(clientService.buscarPorObra(obra));
+
+	}
 
 	@GetMapping
 	@ApiOperation(value = "Se obtienen todos los clientes")
