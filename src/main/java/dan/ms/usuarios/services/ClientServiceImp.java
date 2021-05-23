@@ -205,6 +205,12 @@ public class ClientServiceImp implements ClientService {
 		return clienteRepo.findAll();
 	}
 
+	/* Permite buscar un cliente pasandole el id de algunas de sus obras
+	 * 
+	 * @return Retorna un Optional del cliente.
+	 * @param recibe el id de una obra   
+	 * */
+
 	@Override
 	public Optional<Cliente> buscarPorIdObra(Integer idObra) {
 		Optional<Obra> optObraBuscada = obraService.buscarObra(idObra);
@@ -215,6 +221,12 @@ public class ClientServiceImp implements ClientService {
 		return Optional.empty();
 	}
 
+	/* Permite buscar un cliente pasandole una obra, la obra debe ser exactamente
+	 * igual a la que se requiere buscar, excepto su id.
+	 * 
+	 * @return Retorna un Optional del cliente.
+	 * @param recibe el una obra  
+	 * */
 	@Override
 	public Optional<Cliente> buscarPorObra(Obra obra) {
 		Optional<Obra> optObraBuscada = obraService.buscarObra(obra);

@@ -10,7 +10,7 @@ import dan.ms.usuarios.services.interfaces.PedidoRestExternoService;
 @Service
 public class PedidoRestExternoServiceImp implements PedidoRestExternoService{
 
-	private static String API_REST_PEDIDO = "http://localhost:8080/api";
+	private static String API_REST_PEDIDO = "http://localhost:9002/api";
 	private static String ENDPOINT_PEDIDO = "/pedido";
 	
 	@Override
