@@ -58,16 +58,13 @@ public class ObraRest {
 			@ApiResponse(code=404,message = "No se encontro la obra con ese ID")
 	})
 	public ResponseEntity<Obra> actualizar(@RequestBody Obra obra, @PathVariable Integer id){
-		OptionalInt index = IntStream.range(0,listaObra.size())
-				.filter(i -> listaObra.get(i).getId().equals(id))
-				.findFirst();
-		if(index.isPresent()) {
-			listaObra.set(index.getAsInt(), obra);
-			return ResponseEntity.ok(obra);
+		//seteamos el id de recibido en el path.
+		obra.setId(id);
+		Optional<Obra> optObraActualizada = obraService.actualizarObra(obra);
+		if(optObraActualizada.isEmpty()) {
+			return ResponseEntity.badRequest().build();
 		}
-		else {
-			return ResponseEntity.notFound().build();
-		}
+		return ResponseEntity.of(optObraActualizada);
 	}
 	
 	@DeleteMapping(path="/{id}")

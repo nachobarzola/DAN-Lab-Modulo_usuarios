@@ -157,4 +157,26 @@ public class ObraServiceImp implements ObraService {
 		return obraRepo.findByCliente(optClienteBuscado.get());
 	}
 
+	@Override
+	public Optional<Obra> actualizarObra(Obra obra) {
+		try {
+			Optional<Obra> optObraBuscada = obraRepo.findById(obra.getId());
+			if(optObraBuscada.isEmpty()) {
+				//No se encontro la obra a actualizar
+				return Optional.empty();
+			}
+			//Si se encontro, la actualizo
+			Obra obraBuscada = optObraBuscada.get();
+			obra.setCliente(obraBuscada.getCliente());
+			obra.setTipo(obraBuscada.getTipo());
+			//Actualizo la obra en el repo
+			Obra obraActualizada = obraRepo.save(obra);
+			return Optional.of(obraActualizada);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Optional.empty();
+		}
+	}
+
 }

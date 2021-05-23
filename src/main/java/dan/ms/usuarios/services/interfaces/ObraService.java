@@ -24,4 +24,6 @@ public interface ObraService {
 	public List<Obra> buscarObraPorTipoObra(Integer idTipoObra);
 	
 	public List<Obra> buscarObraPorCuitCliente(String cuitCliente);
+	
+	public Optional<Obra> actualizarObra(Obra obra);
 }
