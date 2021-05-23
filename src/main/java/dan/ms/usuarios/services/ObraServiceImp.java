@@ -130,4 +130,31 @@ public class ObraServiceImp implements ObraService {
 		return optObraGuardada;
 	}
 
+	@Override
+	public List<Obra> buscarObraPorIdCliente(Integer idCliente) {
+		Optional<Cliente> optClienteBuscado = clienteService.buscarPorId(idCliente);
+		if(optClienteBuscado.isEmpty()) {
+			return null;
+		}
+		return obraRepo.findByCliente(optClienteBuscado.get());
+	}
+
+	@Override
+	public List<Obra> buscarObraPorTipoObra(Integer idTipoObra) {
+		Optional<TipoObra> optTipoObraBuscado = tipoObraRepo.findById(idTipoObra);
+		if(optTipoObraBuscado.isEmpty()) {
+			return null;
+		}
+		return obraRepo.findByTipo(optTipoObraBuscado.get());
+	}
+
+	@Override
+	public List<Obra> buscarObraPorCuitCliente(String cuitCliente) {
+		Optional<Cliente> optClienteBuscado = clienteService.buscarPorCuit(cuitCliente);
+		if(optClienteBuscado.isEmpty()) {
+			return null;
+		}
+		return obraRepo.findByCliente(optClienteBuscado.get());
+	}
+
 }

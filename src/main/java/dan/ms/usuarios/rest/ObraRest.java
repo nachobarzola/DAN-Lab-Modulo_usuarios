@@ -88,10 +88,7 @@ public class ObraRest {
 	@GetMapping(path= "/{id}")
 	@ApiOperation(value="Obtener obra por Id")
 	public ResponseEntity<Obra> getPorId(@PathVariable Integer id){
-		Optional<Obra> obra = listaObra.stream()
-				.filter(unaObra -> unaObra.getId().equals(id))
-				.findFirst();
-		return ResponseEntity.of(obra);
+		return ResponseEntity.of(obraService.buscarObra(id));
 	}
 	
 	//ResponseEntity<List<Obra>>
@@ -109,16 +106,15 @@ public class ObraRest {
 		}
 		//Si se ingresa el parametro id_cliente
 		if(idCliente != null) {
-			respuesta1 = filtrarListaPorIdCliente(idCliente);
-			//System.out.print("Respuesta1:"+respuesta1.size()+"\n");
+			respuesta1.addAll(obraService.buscarObraPorIdCliente(idCliente));
 		}
 		//Si se ingresa el parametro tipoObra
 		if(tipoObra != null) {
-			respuesta2 = filtrarListaPorTipoObra(tipoObra);
-			//System.out.print("Respuesta2:"+respuesta2.size()+"\n");
+			respuesta2.addAll(obraService.buscarObraPorTipoObra(tipoObra));
 		}
 		if(cuitCliente != null) {
-			respuesta3 = filtrarListaPorCuitCliente(cuitCliente);
+			//respuesta3 = filtrarListaPorCuitCliente(cuitCliente);
+			respuesta3.addAll(obraService.buscarObraPorCuitCliente(cuitCliente));
 			//System.out.print("Respuesta3:"+respuesta3.size()+"\n");
 		}
 		respuesta2.addAll(respuesta3);
