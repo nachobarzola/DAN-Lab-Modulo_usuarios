@@ -1,10 +1,7 @@
 package dan.ms.usuarios.rest;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -39,9 +36,7 @@ public class ClienteRest {
 	@Autowired
 	UsuarioService usuarioService;
 
-	private static final List<Cliente> listaClientesAntigua = new ArrayList<>();
-	private static Integer ID_GEN = 1;
-
+	
 	@GetMapping(path = "/{id}")
 	@ApiOperation(value = "Busca un cliente por id")
 	public ResponseEntity<Cliente> clientePorId(@PathVariable Integer id) {

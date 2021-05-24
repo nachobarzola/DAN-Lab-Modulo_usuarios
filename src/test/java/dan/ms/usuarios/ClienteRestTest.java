@@ -161,8 +161,9 @@ class ClienteRestTest {
 
 	}
 
-	// Test unitario
-	@Test
+	//TODO: para el laboratorio 6, esto ya no es requerido, ya que los datos
+	//del usuario se toman desde el cliente
+	@Disabled
 	void crear_clienteIncompleto_faltaTipoUser() {
 		String server = "http://localhost:" + puerto + ENDPOINT_CLIENTE;
 		// Creo un cliente
@@ -186,8 +187,9 @@ class ClienteRestTest {
 
 	}
 
-	// Test unitario
-	@Test
+	//TODO: para el laboratorio 6, esto ya no es requerido, ya que los datos
+	//del usuario se toman desde el cliente
+	@Disabled
 	void crear_clienteIncompleto_faltaUser() {
 		String server = "http://localhost:" + puerto + ENDPOINT_CLIENTE;
 		// Creo un cliente
@@ -211,8 +213,9 @@ class ClienteRestTest {
 
 	}
 
-	// Test unitario
-	@Test
+	//TODO: para el laboratorio 6, esto ya no es requerido, ya que los datos
+	//del usuario se toman desde el cliente
+	@Disabled
 	void crear_clienteIncompleto_faltaPasswordUser() {
 		String server = "http://localhost:" + puerto + ENDPOINT_CLIENTE;
 		// Creo un cliente
@@ -274,8 +277,9 @@ class ClienteRestTest {
 
 	}
 
-	// Test unitario
-	@Test
+	//TODO: para el laboratorio 6, esto ya no es requerido, ya que los datos
+	//del usuario se toman desde el cliente
+	@Disabled
 	void crear_clienteIncompleto_faltanNombreUsuario() {
 		String server = "http://localhost:" + puerto + ENDPOINT_CLIENTE;
 
@@ -295,7 +299,9 @@ class ClienteRestTest {
 
 	}
 
-	@Test
+	//TODO: para el laboratorio 6, esto ya no es requerido, ya que los datos
+	//del usuario se toman desde el cliente
+	@Disabled
 	void crear_clienteIncompleto_faltaPassword() {
 		String server = "http://localhost:" + puerto + ENDPOINT_CLIENTE;
 
@@ -386,7 +392,7 @@ class ClienteRestTest {
 		c1.setMaxCuentaCorriente(90999);
 		c1.setMail("HomeroJSimpsons@hotmail.com");
 		//
-		String server = "http://localhost:" + puerto + ENDPOINT_CLIENTE + "/" + c1.getId();
+		String server = "http://localhost:" + puerto + ENDPOINT_CLIENTE + "/" + c1.getCuit();
 		HttpEntity<Cliente> requestCliente = new HttpEntity<>(c1);
 		ResponseEntity<Cliente> respuesta = testRestTemplate.exchange(server, HttpMethod.PUT, requestCliente,
 				Cliente.class);
