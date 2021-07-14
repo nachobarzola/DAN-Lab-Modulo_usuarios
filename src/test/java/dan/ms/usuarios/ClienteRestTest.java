@@ -28,6 +28,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -44,7 +45,7 @@ import dan.ms.usuarios.services.interfaces.PedidoRestExternoService;
 
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@Profile("testing")
+@ActiveProfiles("testing")
 class ClienteRestTest {
 
 	private String ENDPOINT_CLIENTE = "/api/cliente";

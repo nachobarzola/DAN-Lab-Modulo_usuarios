@@ -37,7 +37,6 @@ import dan.ms.usuarios.services.interfaces.ClientService;
 import dan.ms.usuarios.services.interfaces.PedidoRestExternoService;
 
 @SpringBootTest
-@Profile("testing")
 public class ClientServiceImpTest {
 
 	@Autowired
