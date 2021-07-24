@@ -157,7 +157,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<repository>dan/app-micro-usuario</repository>
+					<repository>dan/app-micro-usuarios</repository>
 					<tag>${project.version}</tag>
 					<buildArgs>
 						<JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
