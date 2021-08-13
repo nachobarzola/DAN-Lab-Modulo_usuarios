@@ -5,17 +5,13 @@ import java.util.Optional;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import dan.ms.usuarios.domain.Cliente;
 import dan.ms.usuarios.domain.Obra;
 import dan.ms.usuarios.domain.TipoUsuario;
 import dan.ms.usuarios.domain.Usuario;
 import dan.ms.usuarios.services.dao.ClienteRepository;
-import dan.ms.usuarios.services.dao.UsuarioRepository;
 import dan.ms.usuarios.services.interfaces.ClientService;
 import dan.ms.usuarios.services.interfaces.ObraService;
 import dan.ms.usuarios.services.interfaces.PedidoRestExternoService;
