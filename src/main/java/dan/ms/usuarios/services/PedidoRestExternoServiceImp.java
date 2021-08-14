@@ -17,18 +17,22 @@ public class PedidoRestExternoServiceImp implements PedidoRestExternoService {
 	@SuppressWarnings("rawtypes")
 	@Autowired
 	CircuitBreakerFactory circuitBreakerFactory;
-
-	private static String API_REST_PEDIDO = "http://localhost:9002/";
-	private static String ENDPOINT_PEDIDO = "api/pedido";
-	Boolean error=false;
+	
+	@Autowired
+	RestTemplate restPedido;
 
 	@Autowired
 	ObraService obraService;
+	
+	private static String API_REST_PEDIDO = "http://modulo-pedidos/";
+	private static String ENDPOINT_PEDIDO = "api/pedido";
+	Boolean error=false;
+
+	
 
 	@Override
 	public Boolean tienePedidos(Integer idCliente) {
 		CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
-		RestTemplate restUsuario = new RestTemplate();
 		String uri = API_REST_PEDIDO + ENDPOINT_PEDIDO + "/obra/";
 		//
 		Object[] respuesta;
@@ -42,7 +46,7 @@ public class PedidoRestExternoServiceImp implements PedidoRestExternoService {
 
 			//respuesta = restUsuario.exchange(uri + unaObra.getId(), HttpMethod.GET, null, Object[].class);
 			respuesta = circuitBreaker.run(() -> 
-			restUsuario.getForObject(uri + unaObra.getId(),Object[].class),
+			restPedido.getForObject(uri + unaObra.getId(),Object[].class),
 			throwable -> defaultResponse());
 			if(respuesta!=null) {
 			tienePedidos = (respuesta.length > 0);
