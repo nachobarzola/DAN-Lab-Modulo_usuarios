@@ -90,7 +90,9 @@ public class ObraRest {
 	
 	//ResponseEntity<List<Obra>>
 	@GetMapping
-	@ApiOperation(value="Obtener obra por id del cliente y/o tipo de obra y/o cuit del cliente. Usando parametros opcionales")
+	@ApiOperation(value="Obtener obra por id del cliente y/o tipo de obra y/o cuit del cliente. "
+			+ "Usando parametros opcionales"
+			+ "Consideramos que no se puede obtener las obras de un cliente dado de baja")
 	public ResponseEntity<List<Obra>> getObraPorClienteOTipo(@RequestParam(required=false) Integer idCliente, @RequestParam(required=false) Integer tipoObra,
 			@RequestParam(required=false) String cuitCliente){
 		
@@ -103,14 +105,25 @@ public class ObraRest {
 		}
 		//Si se ingresa el parametro id_cliente
 		if(idCliente != null) {
-			respuesta1.addAll(obraService.buscarObraPorIdCliente(idCliente));
+			List<Obra> listaObra = obraService.buscarObraPorIdCliente(idCliente);
+			if(listaObra!=null) {
+				respuesta1.addAll(listaObra);
+			}
+			
 		}
 		//Si se ingresa el parametro tipoObra
 		if(tipoObra != null) {
-			respuesta2.addAll(obraService.buscarObraPorTipoObra(tipoObra));
+			List<Obra> listaObra = obraService.buscarObraPorTipoObra(tipoObra);
+			if(listaObra!=null) {
+				respuesta2.addAll(listaObra);
+			}
+			
 		}
 		if(cuitCliente != null) {
-			respuesta3.addAll(obraService.buscarObraPorCuitCliente(cuitCliente));
+			List<Obra> listaObra = obraService.buscarObraPorCuitCliente(cuitCliente);
+			if(listaObra!=null) {
+				respuesta3.addAll(listaObra);
+			}
 		}
 		respuesta2.addAll(respuesta3);
 		respuesta1.addAll(respuesta2);
