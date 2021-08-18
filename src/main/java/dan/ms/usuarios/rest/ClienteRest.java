@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,9 +26,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
+
 @RestController
 @RequestMapping("/api/cliente")
 @Api(value = "ClienteRest", description = "Permite gestionar los clientes de la empresa")
+
+
 public class ClienteRest {
 
 	@Autowired
@@ -70,6 +74,7 @@ public class ClienteRest {
 	}
 
 	@GetMapping
+
 	@ApiOperation(value = "Se obtienen todos los clientes")
 	public ResponseEntity<List<Cliente>> getAllCliente() {
 		return ResponseEntity.ok(clientService.getAllCliente());
