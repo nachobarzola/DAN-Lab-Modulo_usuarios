@@ -29,6 +29,7 @@ import io.swagger.annotations.ApiResponses;
 
 @RestController
 @RequestMapping("/api/cliente")
+@CrossOrigin("*")
 @Api(value = "ClienteRest", description = "Permite gestionar los clientes de la empresa")
 
 
